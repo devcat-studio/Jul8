@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeBuilder.cs" />
     <Compile Include="Elements\Container.cs" />
     <Compile Include="Elements\Control.cs" />
     <Compile Include="Elements\Template.cs" />

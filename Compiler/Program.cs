@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Jul8Compiler
 {
@@ -31,7 +30,7 @@ namespace Jul8Compiler
             foreach (var templateNode in templateNodes)
             {
                 var parent = templateNode.ParentNode;
-                while(parent != null)
+                while (parent != null)
                 {
                     if (parent.Attributes.Contains("data-templateId") == true)
                     {
@@ -66,49 +65,50 @@ namespace Jul8Compiler
                 }
 
                 templates.Add(template);
-                //Console.WriteLine(template.Id);
             }
 
             // 코드젠
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("namespace Silvervine { ");
-
-            foreach (var template in templates)
+            CodeBuilder sb = new CodeBuilder();
+            sb.AppendLine("namespace Silvervine");
+            using (sb.Indent("{", "}"))
             {
-                sb.AppendFormat("\texport class {0} {{", template.Id + "_d");
-                sb.AppendLine();
-                sb.AppendLine("\t\troot: JQuery;");
-
-                // 여기서 콘트롤 목록 생성
-                foreach (var control in template.Controls)
+                foreach (var template in templates)
                 {
-                    sb.AppendLine("\t\t" + control.Id + ": JQuery;");
+                    GenerateClass(sb, template);
                 }
-
-                sb.AppendLine();
-
-                sb.AppendLine("\t\tconstructor(templateHolder: TemplateHolder, parentNode?: JQuery) {");
-                sb.AppendFormat("\t\t\tlet t = templateHolder.create('{0}');", template.Id);
-                sb.AppendLine();
-                sb.AppendLine("\t\t\tthis.root = t.root();");
-                sb.AppendLine("\t\t\tif (parentNode) { parentNode.append(this.root); }");
-                sb.AppendLine();
-
-                // 여기서 콘트롤 매핑
-                foreach (var control in template.Controls)
-                {
-                    sb.AppendFormat("\t\t\tthis.{0} = t.C('{0}');", control.Id);
-                    sb.AppendLine();
-                }
-
-                sb.AppendLine("\t\t}");
-                sb.AppendLine("\t}");
-                sb.AppendLine("");
             }
-            sb.AppendLine("}");
 
             File.WriteAllText(args[1], sb.ToString());
+        }
+
+        static void GenerateClass(CodeBuilder sb, Elements.Template template)
+        {
+            sb.AppendFormat("export class {0}_d", template.Id);
+            using (sb.Indent("{", "}"))
+            {
+                sb.AppendLine("root: JQuery;");
+                foreach (var control in template.Controls)
+                {
+                    sb.AppendLine(control.Id + ": JQuery;");
+                }
+                sb.AppendLine();
+
+                sb.AppendLine("constructor(templateHolder: TemplateHolder, parentNode?: JQuery)");
+                using (sb.Indent("{", "}"))
+                {
+                    sb.AppendFormat("let t = templateHolder.create('{0}');\n", template.Id);
+                    sb.AppendLine("this.root = t.root();");
+                    sb.AppendLine("if (parentNode) { parentNode.append(this.root); }");
+                    sb.AppendLine();
+
+                    foreach (var control in template.Controls)
+                    {
+                        sb.AppendFormat("this.{0} = t.C('{0}');", control.Id);
+                        sb.AppendLine();
+                    }
+                }
+            }
+            sb.AppendLine("");
         }
     }
 }
