@@ -1,0 +1,15 @@
+{
+  "header": [
+    "/// <reference path='../Library/TemplateHolder.ts' />",
+    "/// <reference path='../Library/jquery.d.ts' />",
+    ""
+  ],
+  "footer": [
+  ],
+  "build": [
+    {
+      "source": "html/sample_templates.html",
+      "target": "sample_templates.g.ts"
+    }
+  ]
+}

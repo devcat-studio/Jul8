@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Jul8 test</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script class="javascript" src="all.js"></script>
+</head>
+<body style='background: #fff; padding: 10pt;'>
+
+	<div class="panel panel-default">
+		<div class="panel-body" id="PANEL_BODY">
+            asdfasfsd
+		</div>
+	</div>	
+
+    <div id='TEMPLATE_HOLDER_ROOT' style='display:none;'>
+        <!------------------------------------------------------------------------------>
+        $(TemplateBegin)
+        <table data-templateId="MyTable" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Gateway IP</th>
+                    <th>VGS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-listItemId="TR" style="cursor: pointer">
+                    <td data-controlId="NUM"></td>
+                    <td data-controlId="ALIAS"></td>
+                    <td data-controlId="IP">127.0.0.1</td>
+                    <td data-controlId="VGSNAME">vgs01</td>
+                </tr>
+            </tbody>
+        </table>
+
+        $(TemplateEnd)
+        <!------------------------------------------------------------------------------>
+    </div>
+</body>
+</html>

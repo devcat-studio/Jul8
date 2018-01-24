@@ -5,6 +5,17 @@ VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jul8Compiler", "Compiler\Jul8Compiler.csproj", "{C04E0741-0692-4AF6-8C77-B85B8099B3CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jul8Sample", "Sample\Jul8Sample.csproj", "{CEABB5BB-24CF-48A3-B63E-725D28F34461}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C04E0741-0692-4AF6-8C77-B85B8099B3CF} = {C04E0741-0692-4AF6-8C77-B85B8099B3CF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{DA960642-939F-4F92-B1BE-FEE6C00FF58E}"
+	ProjectSection(SolutionItems) = preProject
+		Library\jquery.d.ts = Library\jquery.d.ts
+		Library\TemplateHolder.ts = Library\TemplateHolder.ts
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +26,10 @@ Global
 		{C04E0741-0692-4AF6-8C77-B85B8099B3CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C04E0741-0692-4AF6-8C77-B85B8099B3CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C04E0741-0692-4AF6-8C77-B85B8099B3CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEABB5BB-24CF-48A3-B63E-725D28F34461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEABB5BB-24CF-48A3-B63E-725D28F34461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEABB5BB-24CF-48A3-B63E-725D28F34461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEABB5BB-24CF-48A3-B63E-725D28F34461}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

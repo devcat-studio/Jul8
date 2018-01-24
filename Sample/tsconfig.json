@@ -1,0 +1,24 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "declaration": false,
+
+    "lib": [ "dom", "es5", "es6" ],
+    "module": "none",
+    "noEmitOnError": true,
+    "removeComments": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "outFile": "html/all.js",
+    "sourceMap": true,
+    "target": "es5",
+    "inlineSources": true
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+  ]
+}

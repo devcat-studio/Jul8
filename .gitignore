@@ -1,4 +1,7 @@
 */bin/
 */obj/
 .vs
-/packages
+packages
+*.csproj.user
+all.js
+all.js.map

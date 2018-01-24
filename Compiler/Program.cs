@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,14 +11,30 @@ namespace Jul8Compiler
     {
         static void Main(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length != 1)
             {
-                Console.WriteLine("usage: Jul8Compiler.exe <INPUT_FILE> <OUTPUT_FILE>");
+                Console.WriteLine("usage: Jul8Compiler.exe <JUL8CONFIG.JSON>");
                 Environment.Exit(1);
             }
 
-            var content = File.ReadAllText(args[0]);
+            var configContent = File.ReadAllText(args[0]);
+            var config = JsonConvert.DeserializeObject<ConfigRoot>(configContent);
 
+            var dir = Path.GetDirectoryName(args[0]);
+
+            foreach (var item in config.build)
+            {
+                var sourcePath = Path.Combine(dir, item.source);
+                var targetPath = Path.Combine(dir, item.target);
+
+                var templates = ParseHtml(sourcePath);
+                GenerateTypeScript(config, templates, targetPath);
+            }
+        }
+
+        static List<Elements.Template> ParseHtml(string path)
+        {
+            var content = File.ReadAllText(path);
             var doc = new HtmlDocument();
             doc.LoadHtml(content);
 
@@ -63,27 +80,36 @@ namespace Jul8Compiler
                         template.Controls.Add(control);
                     }
                 }
-
+                
                 templates.Add(template);
             }
 
-            // 코드젠
+            return templates;
+        }
+
+        static void GenerateTypeScript(ConfigRoot config, List<Elements.Template> templates, string path)
+        {
             CodeBuilder sb = new CodeBuilder();
-            sb.AppendLine("namespace Silvervine");
-            using (sb.Indent("{", "}"))
+            foreach (var ln in config.header)
             {
-                foreach (var template in templates)
-                {
-                    GenerateClass(sb, template);
-                }
+                sb.AppendLine(ln);
             }
 
-            File.WriteAllText(args[1], sb.ToString());
+            foreach (var template in templates)
+            {
+                GenerateClass(sb, template);
+            }
+
+            foreach (var ln in config.footer)
+            {
+                sb.AppendLine(ln);
+            }
+            sb.WriteToFile(path);
         }
 
         static void GenerateClass(CodeBuilder sb, Elements.Template template)
         {
-            sb.AppendFormat("export class {0}_d", template.Id);
+            sb.AppendFormat("class {0}_d", template.Id);
             using (sb.Indent("{", "}"))
             {
                 sb.AppendLine("root: JQuery;");
@@ -93,18 +119,16 @@ namespace Jul8Compiler
                 }
                 sb.AppendLine();
 
-                sb.AppendLine("constructor(templateHolder: TemplateHolder, parentNode?: JQuery)");
+                sb.AppendLine("constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)");
                 using (sb.Indent("{", "}"))
                 {
-                    sb.AppendFormat("let t = templateHolder.create('{0}');\n", template.Id);
+                    sb.AppendFormat("let t = templateHolder.create('{0}');", template.Id);
                     sb.AppendLine("this.root = t.root();");
                     sb.AppendLine("if (parentNode) { parentNode.append(this.root); }");
-                    sb.AppendLine();
 
                     foreach (var control in template.Controls)
                     {
                         sb.AppendFormat("this.{0} = t.C('{0}');", control.Id);
-                        sb.AppendLine();
                     }
                 }
             }

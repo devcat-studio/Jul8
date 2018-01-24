@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -6,22 +7,32 @@ namespace Jul8Compiler
 {
     class CodeBuilder
     {
-        StringBuilder sb = new StringBuilder();
+        List<string> code = new List<string>();
         int indentLevel = 0;
 
         public void AppendLine(string s = "")
         {
-            sb.AppendLine(Indentation + s);
+            code.Add(Indentation + s);
         }
 
         public void AppendFormat(string format, params object[] args)
         {
-            sb.AppendFormat(Indentation + format, args);
+            AppendLine(string.Format(format, args));
         }
 
         public void WriteToFile(string path)
         {
-            File.WriteAllText(path, sb.ToString());
+            string content = String.Join("\r\n", code);
+
+            if (File.Exists(path) && File.ReadAllText(path) == content)
+            {
+                Console.WriteLine("Skipping " + path + "...");
+            }
+            else
+            {
+                Console.WriteLine("Writing " + path + "...");
+                File.WriteAllText(path, content, new UTF8Encoding(true));
+            }
         }
 
         public Indented Indent(string open, string close)
@@ -40,7 +51,7 @@ namespace Jul8Compiler
         {
             get
             {
-                return new string(' ', 4);
+                return new string(' ', 4 * indentLevel);
             }
         }
 
