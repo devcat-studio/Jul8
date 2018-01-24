@@ -32,62 +32,70 @@ namespace Jul8Compiler
             }
         }
 
-        static List<Elements.Template> ParseHtml(string path)
+        static List<Template> ParseHtml(string path)
         {
             var content = File.ReadAllText(path);
             var doc = new HtmlDocument();
             doc.LoadHtml(content);
 
-            List<Elements.Template> templates = new List<Elements.Template>();
-            var rootNode = doc.DocumentNode.SelectSingleNode("//body/div");
-            var templateNodes = doc.DocumentNode.SelectNodes("//*").Where(x => x.GetAttributeValue("data-templateId", null) != null);
+            List<Template> templates = new List<Template>();
 
-            // template안에 template이 있는 경우 루트로 옮겨준다.
-            // 미리보기를 위해서 그렇게 정의되어 있는거지 실제로 자식노드 처럼 처리하면 controlId 같은것이 중복 파싱되는 문제가 생김
+            var rootNode = doc.DocumentNode.SelectSingleNode("//body/div");
+            var templateNodes = doc.DocumentNode
+                .SelectNodes("//*")
+                .Where(x => x.GetAttributeValue("data-templateId", null) != null);
+
+            // template들을 트리에서 뗀다.
+            // 그대로 둔 상태로 처리하면 템플릿 안에 템플릿이 들어있을 때
+            // controlId 같은것이 중복 파싱되는 문제가 생긴다.
             foreach (var templateNode in templateNodes)
             {
-                var parent = templateNode.ParentNode;
-                while (parent != null)
-                {
-                    if (parent.Attributes.Contains("data-templateId") == true)
-                    {
-                        templateNode.Remove();
-                        rootNode.AppendChild(templateNode);
-                        break;
-                    }
-
-                    parent = parent.ParentNode;
-                }
+                templateNode.Remove();
             }
 
             foreach (var templateNode in templateNodes)
             {
-                var template = new Elements.Template();
-                template.Id = templateNode.Attributes["data-templateId"].Value;
-
-                // 콘트롤을 찾아보자
-                var childNodes = templateNode.SelectNodes(".//*");
-                if (childNodes != null)
-                {
-                    var controlNodes = childNodes.Where(x => x.GetAttributeValue("data-controlId", null) != null);
-                    foreach (var controlNode in controlNodes)
-                    {
-                        var control = new Elements.Control();
-                        var controlId = controlNode.Attributes["data-controlId"].Value; ;
-
-                        control.Id = controlId;
-
-                        template.Controls.Add(control);
-                    }
-                }
-                
-                templates.Add(template);
+                templates.Add(ParseTemplate(templateNode, ""));
             }
 
             return templates;
         }
 
-        static void GenerateTypeScript(ConfigRoot config, List<Elements.Template> templates, string path)
+        static Template ParseTemplate(HtmlNode templateNode, string namePrefix)
+        {
+            var template = new Template();
+            var attrName = (namePrefix == "")
+                ? "data-templateId"
+                : "data-listItemId";
+            template.TemplateId = namePrefix + templateNode.Attributes[attrName].Value;
+
+            var childNodes = templateNode.SelectNodes(".//*");
+            if (childNodes != null)
+            {
+                var listItemNodes = childNodes.Where(x => x.GetAttributeValue("data-listItemId", null) != null);
+                foreach (var node in listItemNodes)
+                {
+                    node.Remove(); // 지금 떼어놔야 바로 다음에 컨트롤 검색에서 빠진다.
+                    template.ListItems.Add(ParseTemplate(node, template.TemplateId + "_"));
+                }
+            }
+
+            // data-listItemId 붙은 것들을 뗀 상태에서 다시 검색한다
+            childNodes = templateNode.SelectNodes(".//*");
+            if (childNodes != null)
+            {
+                var controlNodes = childNodes.Where(x => x.GetAttributeValue("data-controlId", null) != null);
+                foreach (var controlNode in controlNodes)
+                {
+                    var controlId = controlNode.Attributes["data-controlId"].Value; ;
+                    template.Controls.Add(controlId);
+                }
+            }
+
+            return template;
+        }
+
+        static void GenerateTypeScript(ConfigRoot config, List<Template> templates, string path)
         {
             CodeBuilder sb = new CodeBuilder();
             foreach (var ln in config.header)
@@ -107,32 +115,60 @@ namespace Jul8Compiler
             sb.WriteToFile(path);
         }
 
-        static void GenerateClass(CodeBuilder sb, Elements.Template template)
+        static void GenerateClass(CodeBuilder sb, Template template)
         {
-            sb.AppendFormat("class {0}_d", template.Id);
+            sb.AppendFormat("class {0}_d", template.TemplateId);
+
             using (sb.Indent("{", "}"))
             {
-                sb.AppendLine("root: JQuery;");
-                foreach (var control in template.Controls)
+                sb.AppendLine("tmpl: Jul8.TemplateInstance;");
+                foreach (var controlId in template.Controls)
                 {
-                    sb.AppendLine(control.Id + ": JQuery;");
+                    sb.AppendLine(controlId + ": JQuery;");
                 }
                 sb.AppendLine();
 
+                // 생성자
                 sb.AppendLine("constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)");
                 using (sb.Indent("{", "}"))
                 {
-                    sb.AppendFormat("let t = templateHolder.create('{0}');", template.Id);
-                    sb.AppendLine("this.root = t.root();");
-                    sb.AppendLine("if (parentNode) { parentNode.append(this.root); }");
+                    sb.AppendFormat("let t = templateHolder.create('{0}');", template.TemplateId);
+                    sb.AppendLine("this.tmpl = t;");
+                    sb.AppendLine("if (parentNode) { parentNode.append(t.root()); }");
 
-                    foreach (var control in template.Controls)
+                    foreach (var controlId in template.Controls)
                     {
-                        sb.AppendFormat("this.{0} = t.C('{0}');", control.Id);
+                        sb.AppendFormat("this.{0} = t.C('{0}');", controlId);
                     }
                 }
+
+                // 리스트
+                /*
+                addTR(): MyTable_TR_d
+                {
+                    let t = this.root.addListItem('TR');
+                    let child = new MyTable_TR_d(t);
+                    this.listOfTR.push(child);
+                    return child;
+                }
+
+                removeTR(child: MyTable_TR_d): void
+                {
+                    var idx = this.listOfTR.indexOf(child);
+                    if (idx >= 0)
+                    {
+                        this.listOfTR.splice(idx, 1);
+                        child.tempInst.root().remove();
+                    }
+                }
+                */
             }
             sb.AppendLine("");
+
+            foreach (var item in template.ListItems)
+            {
+                GenerateClass(sb, item);
+            }
         }
     }
 }
