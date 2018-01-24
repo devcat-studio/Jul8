@@ -17,8 +17,6 @@ namespace Jul8Compiler
                 Environment.Exit(1);
             }
 
-            bool backOfficeMode = (args.Length >= 3) && (args[2] == "backOfficeMode");
-
             var content = File.ReadAllText(args[0]);
 
             var doc = new HtmlDocument();
@@ -74,28 +72,13 @@ namespace Jul8Compiler
             // 코드젠
 
             StringBuilder sb = new StringBuilder();
-            if (backOfficeMode)
-            {
-                sb.AppendLine("namespace Silvervine { ");
-            }
-            else
-            {
-                sb.AppendLine("namespace devCAT { ");
-            }
+            sb.AppendLine("namespace Silvervine { ");
+
             foreach (var template in templates)
             {
-                if (backOfficeMode)
-                {
-                    sb.AppendFormat("\texport class {0} {{", template.Id + "_d");
-                    sb.AppendLine();
-                    sb.AppendLine("\t\troot: JQuery;");
-                }
-                else
-                {
-                    sb.AppendFormat("\texport class {0} implements AppElement {{", template.Id + "_d");
-                    sb.AppendLine();
-                    sb.AppendLine("\t\thtml: JQuery;");
-                }
+                sb.AppendFormat("\texport class {0} {{", template.Id + "_d");
+                sb.AppendLine();
+                sb.AppendLine("\t\troot: JQuery;");
 
                 // 여기서 콘트롤 목록 생성
                 foreach (var control in template.Controls)
@@ -105,49 +88,25 @@ namespace Jul8Compiler
 
                 sb.AppendLine();
 
-                if (backOfficeMode)
+                sb.AppendLine("\t\tconstructor(templateHolder: TemplateHolder, parentNode?: JQuery) {");
+                sb.AppendFormat("\t\t\tlet t = templateHolder.create('{0}');", template.Id);
+                sb.AppendLine();
+                sb.AppendLine("\t\t\tthis.root = t.root();");
+                sb.AppendLine("\t\t\tif (parentNode) { parentNode.append(this.root); }");
+                sb.AppendLine();
+
+                // 여기서 콘트롤 매핑
+                foreach (var control in template.Controls)
                 {
-                    sb.AppendLine("\t\tconstructor(templateHolder: TemplateHolder, parentNode?: JQuery) {");
-                    sb.AppendFormat("\t\t\tlet t = templateHolder.create('{0}');", template.Id);
+                    sb.AppendFormat("\t\t\tthis.{0} = t.C('{0}');", control.Id);
                     sb.AppendLine();
-                    sb.AppendLine("\t\t\tthis.root = t.root();");
-                    sb.AppendLine("\t\t\tif (parentNode) { parentNode.append(this.root); }");
-                    sb.AppendLine();
-
-                    // 여기서 콘트롤 매핑
-                    foreach (var control in template.Controls)
-                    {
-                        sb.AppendFormat("\t\t\tthis.{0} = t.C('{0}');", control.Id);
-                        sb.AppendLine();
-                    }
-
-                    sb.AppendLine("\t\t}");
-                }
-                else
-                {
-                    sb.AppendLine("\t\tconstructor() {");
-                    sb.AppendFormat("\t\t\tthis.html = G.templateHolder.create('{0}');", template.Id);
-                    sb.AppendLine();
-
-                    // 여기서 콘트롤 매핑
-                    foreach (var control in template.Controls)
-                    {
-                        sb.AppendFormat("\t\t\tthis.{0} = this.html.find('*[data-controlId=\"{0}\"]');", control.Id);
-                        sb.AppendLine();
-                    }
-
-                    sb.AppendLine("\t\t}");
-
-                    sb.AppendLine("\t\tgetView(): JQuery { return this.html; }");
-                    sb.AppendLine("\t\tinitView(): void { }");
                 }
 
+                sb.AppendLine("\t\t}");
                 sb.AppendLine("\t}");
                 sb.AppendLine("");
             }
             sb.AppendLine("}");
-
-            //Console.WriteLine(sb.ToString());
 
             File.WriteAllText(args[1], sb.ToString());
         }
