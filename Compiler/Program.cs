@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace TemplateParser
+namespace Jul8Compiler
 {
     class Program
     {
@@ -13,7 +13,7 @@ namespace TemplateParser
         {
             if (args.Length < 2)
             {
-                Console.WriteLine("usage: TemplateParser.exe <INPUT_FILE> <OUTPUT_FILE>");
+                Console.WriteLine("usage: Jul8Compiler.exe <INPUT_FILE> <OUTPUT_FILE>");
                 Environment.Exit(1);
             }
 
