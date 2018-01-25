@@ -13,7 +13,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{DA960642-939F-4F92-B1BE-FEE6C00FF58E}"
 	ProjectSection(SolutionItems) = preProject
 		Library\jquery.d.ts = Library\jquery.d.ts
-		Library\TemplateHolder.ts = Library\TemplateHolder.ts
+		Library\jul8.ts = Library\jul8.ts
 	EndProjectSection
 EndProject
 Global

@@ -1,4 +1,4 @@
-﻿/// <reference path='../Library/TemplateHolder.ts' />
+﻿/// <reference path='../Library/jul8.ts' />
 /// <reference path='../Library/jquery.d.ts' />
 
 class MyTable_d
