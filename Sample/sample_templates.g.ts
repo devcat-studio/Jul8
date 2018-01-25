@@ -4,16 +4,14 @@
 class MyTable_d implements Jul8.Element
 {
     $: JQuery;
-    listOf_TR: Jul8.ElementList<MyTable_TR_d>
-    private tmpl: Jul8.TemplateInstance;
+    listOf_TR: Jul8.ElementList<MyTable_TR_d>;
     
     constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
     {
-        let t = templateHolder.create('MyTable');
-        if (parentNode) { parentNode.append(t.root()); }
-        this.tmpl = t;
-        this.$ = t.root();
-        this.listOf_TR = new Jul8.ElementList<MyTable_TR_d>(t);
+        this.$ = templateHolder.cloneTemplate('MyTable');
+        if (parentNode) { parentNode.append(this.$); }
+        let s = new Jul8.Scanner(this.$);
+        this.listOf_TR = s.L<MyTable_TR_d>('TR');
     }
 }
 
@@ -23,28 +21,25 @@ class MyTable_TR_d implements Jul8.Element
     num: JQuery;
     content: JQuery;
     btnRemove: JQuery;
-    private tmpl: Jul8.TemplateInstance;
     
-    constructor(t: Jul8.TemplateInstance)
+    constructor($: JQuery)
     {
-        this.tmpl = t;
-        this.$ = t.root();
-        this.num = t.C('num');
-        this.content = t.C('content');
-        this.btnRemove = t.C('btnRemove');
+        this.$ = $;
+        let s = new Jul8.Scanner(this.$);
+        this.num = s.C('num');
+        this.content = s.C('content');
+        this.btnRemove = s.C('btnRemove');
     }
 }
 
 class Button_d implements Jul8.Element
 {
     $: JQuery;
-    private tmpl: Jul8.TemplateInstance;
     
     constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
     {
-        let t = templateHolder.create('Button');
-        if (parentNode) { parentNode.append(t.root()); }
-        this.tmpl = t;
-        this.$ = t.root();
+        this.$ = templateHolder.cloneTemplate('Button');
+        if (parentNode) { parentNode.append(this.$); }
+        let s = new Jul8.Scanner(this.$);
     }
 }

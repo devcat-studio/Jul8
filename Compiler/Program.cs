@@ -129,9 +129,8 @@ namespace Jul8Compiler
                 }
                 foreach (var listItem in template.ListItems)
                 {
-                    sb.AppendFormat("listOf_{0}: Jul8.ElementList<{1}_d>", listItem.TemplateId, listItem.ClassName);
+                    sb.AppendFormat("listOf_{0}: Jul8.ElementList<{1}_d>;", listItem.TemplateId, listItem.ClassName);
                 }
-                sb.AppendLine("private tmpl: Jul8.TemplateInstance;");
                 sb.AppendLine();
 
                 // 생성자
@@ -141,30 +140,29 @@ namespace Jul8Compiler
                 }
                 else
                 {
-                    sb.AppendLine("constructor(t: Jul8.TemplateInstance)");
+                    sb.AppendLine("constructor($: JQuery)");
                 }
                 using (sb.Indent("{", "}"))
                 {
                     if (isRoot)
                     {
-                        sb.AppendFormat("let t = templateHolder.create('{0}');", template.TemplateId);
-                        sb.AppendLine("if (parentNode) { parentNode.append(t.root()); }");
+                        sb.AppendFormat("this.$ = templateHolder.cloneTemplate('{0}');", template.TemplateId);
+                        sb.AppendLine("if (parentNode) { parentNode.append(this.$); }");
                     }
                     else
                     {
-                        // nothing to write
+                        sb.AppendLine("this.$ = $;");
                     }
-                    sb.AppendLine("this.tmpl = t;");
-                    sb.AppendLine("this.$ = t.root();");
+                    sb.AppendLine("let s = new Jul8.Scanner(this.$);");
 
                     foreach (var controlId in template.Controls)
                     {
-                        sb.AppendFormat("this.{0} = t.C('{0}');", controlId);
+                        sb.AppendFormat("this.{0} = s.C('{0}');", controlId);
                     }
 
                     foreach (var listItem in template.ListItems)
                     {
-                        sb.AppendFormat("this.listOf_{0} = new Jul8.ElementList<{1}_d>(t);", listItem.TemplateId, listItem.ClassName);
+                        sb.AppendFormat("this.listOf_{0} = s.L<{1}_d>('{0}');", listItem.TemplateId, listItem.ClassName);
                     }
                 }
             }

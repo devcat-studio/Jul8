@@ -1,22 +1,23 @@
 ﻿namespace Jul8 {
-    ///////////////////////////////////////////////////////////////////////////
     export interface Element {
         $: JQuery;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
     export class ElementList<T extends Element> {
-        private owner: Jul8.TemplateInstance;
+        private root: JQuery;
+        private tmpl: JQuery;
         private list: T[] = [];
 
-        constructor(owner: Jul8.TemplateInstance) {
-            this.owner = owner;
+        constructor($: JQuery, tmpl: JQuery) {
+            this.root = $;
+            this.tmpl = tmpl;
         }
 
-        add(type: { new(t: Jul8.TemplateInstance): T }): T {
-            let t = this.owner.addListItem('TR');
-            let child = new type(t);
+        add(type: { new(t: JQuery): T }): T {
+            let newNode = this.tmpl.clone();
+            let child = new type(newNode);
             this.list.push(child);
+            this.root.append(newNode);
             return child;
         }
 
@@ -29,30 +30,25 @@
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    export class TemplateInstance {
-        _root: JQuery;
-        _controls: { [key: string]: JQuery } = {};
-        _lists: { [key: string]: { list: JQuery, itemTemplate: JQuery } } = {};
+    export class Scanner {
+        controls: { [key: string]: JQuery } = {};
+        lists: { [key: string]: { list: JQuery, itemTemplate: JQuery } } = {};
 
-        //---------------------------------------------------------------------
         constructor(root: JQuery) {
-            this._root = root;
-
             // 리스트 항목은 부모로부터 뗀다.
             // 그래야 처음에는 없고, 추가하는 만큼 붙일 수 있으니까.
             root.find('[data-listItemId]').each(
                 (i, v) => {
                     let itemId = v.getAttribute('data-listItemId');
 
-                    if (this._lists[itemId]) {
+                    if (this.lists[itemId]) {
                         alert('duplicate listItem id: [' + itemId + ']')
                     }
 
                     let j = $(v);
                     let p = j.parent();
                     j.detach();
-                    this._lists[itemId] = { list: p, itemTemplate: j };
+                    this.lists[itemId] = { list: p, itemTemplate: j };
                 });
 
             // 템플릿과 다르게 컨트롤들은 부모로부터 떼지 않는다.
@@ -61,48 +57,35 @@
                 (i, v) => {
                     let cid = v.getAttribute('data-controlId');
 
-                    if (this._controls[cid]) {
+                    if (this.controls[cid]) {
                         alert('duplicate control id: [' + cid + ']')
                     }
-                    this._controls[cid] = $(v);
+                    this.controls[cid] = $(v);
                 });
         }
 
-        //---------------------------------------------------------------------
         C(controlId: string): JQuery {
-            let ctl = this._controls[controlId];
+            let ctl = this.controls[controlId];
             if (ctl === undefined) {
                 alert('no such control: [' + controlId + ']');
             }
-            return ctl
+            return ctl;
         }
 
-        //---------------------------------------------------------------------
-        root(): JQuery {
-            return this._root;
-        }
-
-        //---------------------------------------------------------------------
-        addListItem(listItemId: string): TemplateInstance {
-            let it = this._lists[listItemId];
+        L<T extends Element>(listItemId: string): ElementList<T> {
+            let it = this.lists[listItemId];
             if (it === undefined) {
                 alert('no such listItem: [' + listItemId + ']');
             }
-            let rv = it.itemTemplate.clone();
-            it.list.append(rv);
-            return new TemplateInstance(rv);
+            return new ElementList<T>(it.list, it.itemTemplate);
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
     export class TemplateHolder {
-        templates: { [key: string]: JQuery } = {};
+        private templates: { [key: string]: JQuery } = {};
 
-        //---------------------------------------------------------------------
-        constructor() {
-        }
+        constructor() { }
 
-        //---------------------------------------------------------------------
         addTemplateString(content: string): void {
             let beginMarker = '$(TemplateBegin)'
             let endMarker = '$(TemplateEnd)'
@@ -113,7 +96,6 @@
             this.addTemplateRoot($(contentBody));
         }
 
-        //---------------------------------------------------------------------
         addTemplateRoot(root: JQuery): void {
             root.find('[data-templateId]').each(
                 (i, v) => {
@@ -124,17 +106,12 @@
                 });
         }
 
-        //---------------------------------------------------------------------
-        create(templateId: string, parent?: JQuery): TemplateInstance {
+        cloneTemplate(templateId: string): JQuery {
             let t = this.templates[templateId];
             if (t === undefined) {
                 alert('no such template: [' + templateId + ']');
             }
-            var rv = new TemplateInstance(t.clone());
-            if (parent) {
-                parent.append(rv.root());
-            }
-            return rv;
+            return t.clone();
         }
     }
 }
