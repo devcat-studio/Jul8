@@ -118,7 +118,7 @@ namespace Jul8Compiler
 
         static void GenerateClass(CodeBuilder sb, Template template, bool isRoot)
         {
-            sb.AppendFormat("class {0}_d", template.ClassName);
+            sb.AppendFormat("class {0}_d implements Jul8.Element", template.ClassName);
 
             using (sb.Indent("{", "}"))
             {
@@ -127,12 +127,11 @@ namespace Jul8Compiler
                 {
                     sb.AppendLine(controlId + ": JQuery;");
                 }
-                sb.AppendLine("");
-                sb.AppendLine("private _T_: Jul8.TemplateInstance;");
                 foreach (var listItem in template.ListItems)
                 {
-                    sb.AppendFormat("private listOf_{0}: {1}_d[] = [];", listItem.TemplateId, listItem.ClassName);
+                    sb.AppendFormat("listOf_{0}: Jul8.ElementList<{1}_d>", listItem.TemplateId, listItem.ClassName);
                 }
+                sb.AppendLine("private _T_: Jul8.TemplateInstance;");
                 sb.AppendLine();
 
                 // 생성자
@@ -162,32 +161,10 @@ namespace Jul8Compiler
                     {
                         sb.AppendFormat("this.{0} = t.C('{0}');", controlId);
                     }
-                }
 
-                // 리스트
-                foreach (var listItem in template.ListItems)
-                {
-                    sb.AppendLine();
-                    sb.AppendFormat("add{0}(): {1}_d", listItem.TemplateId, listItem.ClassName);
-                    using (sb.Indent("{", "}"))
+                    foreach (var listItem in template.ListItems)
                     {
-                        sb.AppendFormat("let t = this._T_.addListItem('{0}');", listItem.TemplateId);
-                        sb.AppendFormat("let child = new {0}_d(t);", listItem.ClassName);
-                        sb.AppendFormat("this.listOf_{0}.push(child);", listItem.TemplateId);
-                        sb.AppendLine("return child;");
-                    }
-
-                    sb.AppendLine();
-                    sb.AppendFormat("remove{0}(child: {1}_d): void", listItem.TemplateId, listItem.ClassName);
-                    using (sb.Indent("{", "}"))
-                    {
-                        sb.AppendFormat("let idx = this.listOf_{0}.indexOf(child);", listItem.TemplateId);
-                        sb.AppendFormat("if (idx >= 0)");
-                        using (sb.Indent("{", "}"))
-                        {
-                            sb.AppendFormat("this.listOf_{0}.splice(idx, 1);", listItem.TemplateId);
-                            sb.AppendLine("child.$.remove();");
-                        }
+                        sb.AppendFormat("this.listOf_{0} = new Jul8.ElementList<{1}_d>(t);", listItem.TemplateId, listItem.ClassName);
                     }
                 }
             }

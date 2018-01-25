@@ -9,10 +9,10 @@ class MyTable extends MyTable_d {
     }
 
     addNewItem(): void {
-        var tr = this.addTR();
+        var tr = this.listOf_TR.add(MyTable_TR_d);
         tr.num.text(++this.count);
         tr.content.text("칸은 만들었는데 딱히 쓸 말이 없는 " + this.count + "번째 행");
-        tr.btnRemove.click(() => this.removeTR(tr));
+        tr.btnRemove.click(() => this.listOf_TR.remove(tr));
     }
 }
 

@@ -1,4 +1,33 @@
 ﻿namespace Jul8 {
+    ///////////////////////////////////////////////////////////////////////////
+    export interface Element {
+        $: JQuery;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    export class ElementList<T extends Element> {
+        private _T_: Jul8.TemplateInstance;
+        private list: T[] = [];
+
+        constructor(templateInstance: Jul8.TemplateInstance) {
+            this._T_ = templateInstance;
+        }
+
+        add(type: { new(t: Jul8.TemplateInstance): T }): T {
+            let t = this._T_.addListItem('TR');
+            let child = new type(t);
+            this.list.push(child);
+            return child;
+        }
+
+        remove(child: T): void {
+            let idx = this.list.indexOf(child);
+            if (idx >= 0) {
+                this.list.splice(idx, 1);
+                child.$.remove();
+            }
+        }
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     export class TemplateInstance {
