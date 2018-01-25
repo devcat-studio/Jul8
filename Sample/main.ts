@@ -12,5 +12,7 @@
             tr.ALIAS.text("alias");
         }
 
-        let addBtn = new MyButton_d(templateHolder, panelBody);
+        let addBtn = new Button_d(templateHolder, panelBody);
+        addBtn._T_.root().text("새 항목 추가");
+        
     });

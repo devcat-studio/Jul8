@@ -122,7 +122,7 @@ namespace Jul8Compiler
 
             using (sb.Indent("{", "}"))
             {
-                sb.AppendLine("tmpl: Jul8.TemplateInstance;");
+                sb.AppendLine("_T_: Jul8.TemplateInstance;");
                 foreach (var controlId in template.Controls)
                 {
                     sb.AppendLine(controlId + ": JQuery;");
@@ -153,7 +153,7 @@ namespace Jul8Compiler
                     {
                         // nothing to write
                     }
-                    sb.AppendLine("this.tmpl = t;");
+                    sb.AppendLine("this._T_ = t;");
 
                     foreach (var controlId in template.Controls)
                     {
@@ -168,7 +168,7 @@ namespace Jul8Compiler
                     sb.AppendFormat("add{0}(): {1}_d", listItem.TemplateId, listItem.ClassName);
                     using (sb.Indent("{", "}"))
                     {
-                        sb.AppendFormat("let t = this.tmpl.addListItem('{0}');", listItem.TemplateId);
+                        sb.AppendFormat("let t = this._T_.addListItem('{0}');", listItem.TemplateId);
                         sb.AppendFormat("let child = new {0}_d(t);", listItem.ClassName);
                         sb.AppendFormat("this.listOf{0}.push(child);", listItem.TemplateId);
                         sb.AppendLine("return child;");
@@ -183,7 +183,7 @@ namespace Jul8Compiler
                         using (sb.Indent("{", "}"))
                         {
                             sb.AppendFormat("this.listOf{0}.splice(idx, 1);", listItem.TemplateId);
-                            sb.AppendLine("child.tmpl.root().remove();");
+                            sb.AppendLine("child._T_.root().remove();");
                         }
                     }
                 }
