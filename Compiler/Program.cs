@@ -131,7 +131,7 @@ namespace Jul8Compiler
                 {
                     sb.AppendFormat("listOf_{0}: Jul8.ElementList<{1}_d>", listItem.TemplateId, listItem.ClassName);
                 }
-                sb.AppendLine("private _T_: Jul8.TemplateInstance;");
+                sb.AppendLine("private tmpl: Jul8.TemplateInstance;");
                 sb.AppendLine();
 
                 // 생성자
@@ -154,7 +154,7 @@ namespace Jul8Compiler
                     {
                         // nothing to write
                     }
-                    sb.AppendLine("this._T_ = t;");
+                    sb.AppendLine("this.tmpl = t;");
                     sb.AppendLine("this.$ = t.root();");
 
                     foreach (var controlId in template.Controls)
