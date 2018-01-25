@@ -20,7 +20,8 @@ let g_jul8: Jul8.TemplateHolder;
 
 $(document).ready(
     () => {
-        g_jul8 = new Jul8.TemplateHolder($('#TEMPLATE_HOLDER_ROOT'));
+        g_jul8 = new Jul8.TemplateHolder();
+        g_jul8.addTemplateRoot($('#TEMPLATE_HOLDER_ROOT'));
 
         let parent = $('#PANEL_BODY');
         let addBtn = new Button_d(g_jul8, parent);

@@ -70,21 +70,22 @@
         templates: { [key: string]: JQuery } = {};
 
         //---------------------------------------------------------------------
-        constructor(content: string | JQuery) {
-            let root: JQuery;
+        constructor() {
+        }
 
-            if (typeof (content) === 'string') {
-                let beginMarker = '$(TemplateBegin)'
-                let endMarker = '$(TemplateEnd)'
-                var beginPos = content.indexOf(beginMarker);
-                var endPos = content.indexOf(endMarker);
-                var contentBody = content.substring(beginPos + beginMarker.length, endPos);
-                root = $(contentBody);
-            }
-            else {
-                root = content;
-            }
+        //---------------------------------------------------------------------
+        addTemplateString(content: string): void {
+            let beginMarker = '$(TemplateBegin)'
+            let endMarker = '$(TemplateEnd)'
+            let beginPos = content.indexOf(beginMarker);
+            let endPos = content.indexOf(endMarker);
+            let contentBody = content.substring(beginPos + beginMarker.length, endPos);
 
+            this.addTemplateRoot($(contentBody));
+        }
+
+        //---------------------------------------------------------------------
+        addTemplateRoot(root: JQuery): void {
             root.find('[data-templateId]').each(
                 (i, v) => {
                     let j = $(v);
