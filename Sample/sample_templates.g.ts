@@ -4,12 +4,31 @@
 class MyTable_d
 {
     tmpl: Jul8.TemplateInstance;
+    listOfTR: MyTable_TR_d[];
     
     constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
     {
         let t = templateHolder.create('MyTable');
-        this.tmpl = t;
         if (parentNode) { parentNode.append(t.root()); }
+        this.tmpl = t;
+    }
+    
+    addTR(): MyTable_TR_d
+    {
+        let t = this.tmpl.addListItem('TR');
+        let child = new MyTable_TR_d(t);
+        this.listOfTR.push(child);
+        return child;
+    }
+    
+    removeTR(child: MyTable_TR_d): void
+    {
+        let idx = this.listOfTR.indexOf(child);
+        if (idx >= 0)
+        {
+            this.listOfTR.splice(idx, 1);
+            child.tmpl.root().remove();
+        }
     }
 }
 
@@ -21,11 +40,9 @@ class MyTable_TR_d
     IP: JQuery;
     VGSNAME: JQuery;
     
-    constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
+    constructor(t: Jul8.TemplateInstance)
     {
-        let t = templateHolder.create('MyTable_TR');
         this.tmpl = t;
-        if (parentNode) { parentNode.append(t.root()); }
         this.NUM = t.C('NUM');
         this.ALIAS = t.C('ALIAS');
         this.IP = t.C('IP');
@@ -40,7 +57,7 @@ class MyButton_d
     constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
     {
         let t = templateHolder.create('MyButton');
-        this.tmpl = t;
         if (parentNode) { parentNode.append(t.root()); }
+        this.tmpl = t;
     }
 }

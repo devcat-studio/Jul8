@@ -67,7 +67,8 @@ namespace Jul8Compiler
             var attrName = (namePrefix == "")
                 ? "data-templateId"
                 : "data-listItemId";
-            template.TemplateId = namePrefix + templateNode.Attributes[attrName].Value;
+            template.TemplateId = templateNode.Attributes[attrName].Value;
+            template.ClassName = namePrefix + template.TemplateId;
 
             var childNodes = templateNode.SelectNodes(".//*");
             if (childNodes != null)
@@ -76,7 +77,7 @@ namespace Jul8Compiler
                 foreach (var node in listItemNodes)
                 {
                     node.Remove(); // 지금 떼어놔야 바로 다음에 컨트롤 검색에서 빠진다.
-                    template.ListItems.Add(ParseTemplate(node, template.TemplateId + "_"));
+                    template.ListItems.Add(ParseTemplate(node, template.ClassName + "_"));
                 }
             }
 
@@ -105,7 +106,7 @@ namespace Jul8Compiler
 
             foreach (var template in templates)
             {
-                GenerateClass(sb, template);
+                GenerateClass(sb, template, true);
             }
 
             foreach (var ln in config.footer)
@@ -115,9 +116,9 @@ namespace Jul8Compiler
             sb.WriteToFile(path);
         }
 
-        static void GenerateClass(CodeBuilder sb, Template template)
+        static void GenerateClass(CodeBuilder sb, Template template, bool isRoot)
         {
-            sb.AppendFormat("class {0}_d", template.TemplateId);
+            sb.AppendFormat("class {0}_d", template.ClassName);
 
             using (sb.Indent("{", "}"))
             {
@@ -126,15 +127,33 @@ namespace Jul8Compiler
                 {
                     sb.AppendLine(controlId + ": JQuery;");
                 }
+                foreach (var listItem in template.ListItems)
+                {
+                    sb.AppendFormat("listOf{0}: {1}_d[];", listItem.TemplateId, listItem.ClassName);
+                }
                 sb.AppendLine();
 
                 // 생성자
-                sb.AppendLine("constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)");
+                if (isRoot)
+                {
+                    sb.AppendLine("constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)");
+                }
+                else
+                {
+                    sb.AppendLine("constructor(t: Jul8.TemplateInstance)");
+                }
                 using (sb.Indent("{", "}"))
                 {
-                    sb.AppendFormat("let t = templateHolder.create('{0}');", template.TemplateId);
+                    if (isRoot)
+                    {
+                        sb.AppendFormat("let t = templateHolder.create('{0}');", template.TemplateId);
+                        sb.AppendLine("if (parentNode) { parentNode.append(t.root()); }");
+                    }
+                    else
+                    {
+                        // nothing to write
+                    }
                     sb.AppendLine("this.tmpl = t;");
-                    sb.AppendLine("if (parentNode) { parentNode.append(t.root()); }");
 
                     foreach (var controlId in template.Controls)
                     {
@@ -143,31 +162,37 @@ namespace Jul8Compiler
                 }
 
                 // 리스트
-                /*
-                addTR(): MyTable_TR_d
+                foreach (var listItem in template.ListItems)
                 {
-                    let t = this.root.addListItem('TR');
-                    let child = new MyTable_TR_d(t);
-                    this.listOfTR.push(child);
-                    return child;
-                }
-
-                removeTR(child: MyTable_TR_d): void
-                {
-                    var idx = this.listOfTR.indexOf(child);
-                    if (idx >= 0)
+                    sb.AppendLine();
+                    sb.AppendFormat("add{0}(): {1}_d", listItem.TemplateId, listItem.ClassName);
+                    using (sb.Indent("{", "}"))
                     {
-                        this.listOfTR.splice(idx, 1);
-                        child.tempInst.root().remove();
+                        sb.AppendFormat("let t = this.tmpl.addListItem('{0}');", listItem.TemplateId);
+                        sb.AppendFormat("let child = new {0}_d(t);", listItem.ClassName);
+                        sb.AppendFormat("this.listOf{0}.push(child);", listItem.TemplateId);
+                        sb.AppendLine("return child;");
+                    }
+
+                    sb.AppendLine();
+                    sb.AppendFormat("remove{0}(child: {1}_d): void", listItem.TemplateId, listItem.ClassName);
+                    using (sb.Indent("{", "}"))
+                    {
+                        sb.AppendFormat("let idx = this.listOf{0}.indexOf(child);", listItem.TemplateId);
+                        sb.AppendFormat("if (idx >= 0)");
+                        using (sb.Indent("{", "}"))
+                        {
+                            sb.AppendFormat("this.listOf{0}.splice(idx, 1);", listItem.TemplateId);
+                            sb.AppendLine("child.tmpl.root().remove();");
+                        }
                     }
                 }
-                */
             }
             sb.AppendLine("");
 
             foreach (var item in template.ListItems)
             {
-                GenerateClass(sb, item);
+                GenerateClass(sb, item, false);
             }
         }
     }
