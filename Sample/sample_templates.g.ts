@@ -38,10 +38,9 @@ class MyTable_d
 class MyTable_TR_d
 {
     $: JQuery;
-    NUM: JQuery;
-    ALIAS: JQuery;
-    IP: JQuery;
-    VGSNAME: JQuery;
+    num: JQuery;
+    content: JQuery;
+    btnRemove: JQuery;
     
     private _T_: Jul8.TemplateInstance;
     
@@ -49,10 +48,9 @@ class MyTable_TR_d
     {
         this._T_ = t;
         this.$ = t.root();
-        this.NUM = t.C('NUM');
-        this.ALIAS = t.C('ALIAS');
-        this.IP = t.C('IP');
-        this.VGSNAME = t.C('VGSNAME');
+        this.num = t.C('num');
+        this.content = t.C('content');
+        this.btnRemove = t.C('btnRemove');
     }
 }
 

@@ -14,7 +14,6 @@
 
 	<div class="panel panel-default">
 		<div class="panel-body" id="PANEL_BODY">
-            asdfasfsd
 		</div>
 	</div>	
 
@@ -24,19 +23,17 @@
         <table data-templateId="MyTable" class="table table-hover">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Gateway IP</th>
-                    <th>
-                        VGS
-                    </th>
+                    <th>번호</th>
+                    <th>내용</th>
+                    <th>동작</th>
                 </tr>
             </thead>
             <tbody>
                 <tr data-listItemId="TR" style="cursor: pointer">
-                    <td data-controlId="NUM"></td>
-                    <td data-controlId="ALIAS"></td>
-                    <td data-controlId="IP">127.0.0.1</td>
-                    <td data-controlId="VGSNAME">
+                    <td data-controlId="num"></td>
+                    <td data-controlId="content"></td>
+                    <td>
+                        <button data-controlId="btnRemove" class="btn btn-default btn-xs">지우기</button>
                     </td>
                 </tr>
             </tbody>
