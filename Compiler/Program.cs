@@ -122,15 +122,16 @@ namespace Jul8Compiler
 
             using (sb.Indent("{", "}"))
             {
-                sb.AppendLine("private _T_: Jul8.TemplateInstance;");
                 sb.AppendLine("$: JQuery;");
                 foreach (var controlId in template.Controls)
                 {
                     sb.AppendLine(controlId + ": JQuery;");
                 }
+                sb.AppendLine("");
+                sb.AppendLine("private _T_: Jul8.TemplateInstance;");
                 foreach (var listItem in template.ListItems)
                 {
-                    sb.AppendFormat("listOf_{0}: {1}_d[] = [];", listItem.TemplateId, listItem.ClassName);
+                    sb.AppendFormat("private listOf_{0}: {1}_d[] = [];", listItem.TemplateId, listItem.ClassName);
                 }
                 sb.AppendLine();
 
