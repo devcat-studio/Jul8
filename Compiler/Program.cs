@@ -129,7 +129,7 @@ namespace Jul8Compiler
                 }
                 foreach (var listItem in template.ListItems)
                 {
-                    sb.AppendFormat("listOf{0}: {1}_d[];", listItem.TemplateId, listItem.ClassName);
+                    sb.AppendFormat("listOf{0}: {1}_d[] = [];", listItem.TemplateId, listItem.ClassName);
                 }
                 sb.AppendLine();
 

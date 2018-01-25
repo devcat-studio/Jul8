@@ -4,7 +4,7 @@
 class MyTable_d
 {
     tmpl: Jul8.TemplateInstance;
-    listOfTR: MyTable_TR_d[];
+    listOfTR: MyTable_TR_d[] = [];
     
     constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
     {

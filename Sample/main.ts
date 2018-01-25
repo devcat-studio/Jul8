@@ -4,5 +4,13 @@
 
         let templateHolder = new Jul8.TemplateHolder($('#TEMPLATE_HOLDER_ROOT'));
 
-        var myTable = new MyTable_d(templateHolder, panelBody);
+        let myTable = new MyTable_d(templateHolder, panelBody);
+
+        for (let i = 0; i < 10; ++i)
+        {
+            var tr = myTable.addTR();
+            tr.ALIAS.text("alias");
+        }
+
+        let addBtn = new MyButton_d(templateHolder, panelBody);
     });
