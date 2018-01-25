@@ -13,6 +13,6 @@
         }
 
         let addBtn = new Button_d(templateHolder, panelBody);
-        addBtn._T_.root().text("새 항목 추가");
+        addBtn.$.text("새 항목 추가");
         
     });

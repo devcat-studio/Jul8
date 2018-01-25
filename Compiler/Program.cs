@@ -123,6 +123,7 @@ namespace Jul8Compiler
             using (sb.Indent("{", "}"))
             {
                 sb.AppendLine("_T_: Jul8.TemplateInstance;");
+                sb.AppendLine("$: JQuery;");
                 foreach (var controlId in template.Controls)
                 {
                     sb.AppendLine(controlId + ": JQuery;");
@@ -154,6 +155,7 @@ namespace Jul8Compiler
                         // nothing to write
                     }
                     sb.AppendLine("this._T_ = t;");
+                    sb.AppendLine("this.$ = t.root();");
 
                     foreach (var controlId in template.Controls)
                     {
