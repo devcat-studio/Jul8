@@ -3,9 +3,9 @@
 
 class MyTable_d
 {
-    _T_: Jul8.TemplateInstance;
+    private _T_: Jul8.TemplateInstance;
     $: JQuery;
-    listOfTR: MyTable_TR_d[] = [];
+    listOf_TR: MyTable_TR_d[] = [];
     
     constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
     {
@@ -19,24 +19,24 @@ class MyTable_d
     {
         let t = this._T_.addListItem('TR');
         let child = new MyTable_TR_d(t);
-        this.listOfTR.push(child);
+        this.listOf_TR.push(child);
         return child;
     }
     
     removeTR(child: MyTable_TR_d): void
     {
-        let idx = this.listOfTR.indexOf(child);
+        let idx = this.listOf_TR.indexOf(child);
         if (idx >= 0)
         {
-            this.listOfTR.splice(idx, 1);
-            child._T_.root().remove();
+            this.listOf_TR.splice(idx, 1);
+            child.$.remove();
         }
     }
 }
 
 class MyTable_TR_d
 {
-    _T_: Jul8.TemplateInstance;
+    private _T_: Jul8.TemplateInstance;
     $: JQuery;
     NUM: JQuery;
     ALIAS: JQuery;
@@ -56,7 +56,7 @@ class MyTable_TR_d
 
 class Button_d
 {
-    _T_: Jul8.TemplateInstance;
+    private _T_: Jul8.TemplateInstance;
     $: JQuery;
     
     constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)

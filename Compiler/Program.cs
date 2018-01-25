@@ -122,7 +122,7 @@ namespace Jul8Compiler
 
             using (sb.Indent("{", "}"))
             {
-                sb.AppendLine("_T_: Jul8.TemplateInstance;");
+                sb.AppendLine("private _T_: Jul8.TemplateInstance;");
                 sb.AppendLine("$: JQuery;");
                 foreach (var controlId in template.Controls)
                 {
@@ -130,7 +130,7 @@ namespace Jul8Compiler
                 }
                 foreach (var listItem in template.ListItems)
                 {
-                    sb.AppendFormat("listOf{0}: {1}_d[] = [];", listItem.TemplateId, listItem.ClassName);
+                    sb.AppendFormat("listOf_{0}: {1}_d[] = [];", listItem.TemplateId, listItem.ClassName);
                 }
                 sb.AppendLine();
 
@@ -172,7 +172,7 @@ namespace Jul8Compiler
                     {
                         sb.AppendFormat("let t = this._T_.addListItem('{0}');", listItem.TemplateId);
                         sb.AppendFormat("let child = new {0}_d(t);", listItem.ClassName);
-                        sb.AppendFormat("this.listOf{0}.push(child);", listItem.TemplateId);
+                        sb.AppendFormat("this.listOf_{0}.push(child);", listItem.TemplateId);
                         sb.AppendLine("return child;");
                     }
 
@@ -180,12 +180,12 @@ namespace Jul8Compiler
                     sb.AppendFormat("remove{0}(child: {1}_d): void", listItem.TemplateId, listItem.ClassName);
                     using (sb.Indent("{", "}"))
                     {
-                        sb.AppendFormat("let idx = this.listOf{0}.indexOf(child);", listItem.TemplateId);
+                        sb.AppendFormat("let idx = this.listOf_{0}.indexOf(child);", listItem.TemplateId);
                         sb.AppendFormat("if (idx >= 0)");
                         using (sb.Indent("{", "}"))
                         {
-                            sb.AppendFormat("this.listOf{0}.splice(idx, 1);", listItem.TemplateId);
-                            sb.AppendLine("child._T_.root().remove();");
+                            sb.AppendFormat("this.listOf_{0}.splice(idx, 1);", listItem.TemplateId);
+                            sb.AppendLine("child.$.remove();");
                         }
                     }
                 }
