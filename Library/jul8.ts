@@ -28,6 +28,11 @@
                 child.$.remove();
             }
         }
+
+        forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void
+        {
+            this.list.forEach(callbackfn, thisArg);
+        }
     }
 
     export class Scanner {
