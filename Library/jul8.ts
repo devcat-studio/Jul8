@@ -40,13 +40,9 @@ namespace Jul8 {
     let pattern = /({{[^}]+}})/g;
 
     export class AttrsAndElems {
-        attrs: { attr: Attr, origValue: string }[] = [];
         elems: { elem: DomElement, origText: string }[] = [];
 
         set(data: any): void {
-            for (let a of this.attrs) {
-                a.attr.value = this.replace(a.origValue, data);
-            }
             for (let e of this.elems) {
                 e.elem.textContent = this.replace(e.origText, data);
             }
@@ -117,14 +113,6 @@ namespace Jul8 {
                 if (elem.textContent.search(pattern) >= 0) {
                     let e = { elem: elem, origText: elem.textContent };
                     this.attrsAndElems.elems.push(e);
-                }
-            }
-
-            for (let i = 0; i < elem.attributes.length; ++i) {
-                let attr = elem.attributes[i];
-                if (attr.value.search(pattern) >= 0) {
-                    let a = { attr: attr, origValue: attr.value };
-                    this.attrsAndElems.attrs.push(a);
                 }
             }
         }
