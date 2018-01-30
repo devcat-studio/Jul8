@@ -6,6 +6,7 @@ namespace Jul8Compiler
     {
         public string TemplateId;
         public string ClassName;
+        public string ModelName;
         public List<string> Controls = new List<string>();
         public List<Template> ListItems = new List<Template>();
     }

@@ -1,5 +1,9 @@
 ﻿/// <reference path='sample_templates.g.ts' />
 
+type SampleData = {
+    num: number;
+};
+
 //-------------------------------------------------------
 // 상속해서 만든 예제.
 // 꼭 상속해서 만들어야만 하는 것은 아니다.
@@ -18,10 +22,11 @@ class MyTable extends MyTable_d {
         var tr = this.listOf_TR.add(MyTable_TR_d);
         let n = ++this.count;
 
-        // 덮어씌우기가 제대로 되는지 확인하기 위해 쓰레기값을 넣는다
-        tr.set({ num: 0, color: 'asdfasdf' });
+        // 덮어씌우기가 제대로 되는지 확인하기 위해 한 번 쓰레기값을 넣는다
+        tr.set({ num: 0 });
 
-        tr.set({ num: n, color: 'red' });
+        tr.set({ num: n });
+
         tr.btnRemove.click(() => this.listOf_TR.remove(tr));
     }
 }

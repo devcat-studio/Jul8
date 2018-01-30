@@ -69,6 +69,7 @@ namespace Jul8Compiler
                 : "j8-listItem";
             template.TemplateId = templateNode.Attributes[attrName].Value;
             template.ClassName = namePrefix + template.TemplateId;
+            template.ModelName = templateNode.Attributes["j8-model"]?.Value;
 
             var childNodes = templateNode.SelectNodes(".//*");
             if (childNodes != null)
@@ -168,7 +169,7 @@ namespace Jul8Compiler
                 }
                 sb.AppendLine("");
                 sb.AppendLine("private j8AttrsAndElems: Jul8.AttrsAndElems;");
-                sb.AppendLine("set(data: any): void { this.j8AttrsAndElems.set(data); }");
+                sb.AppendFormat("set(data: {0}): void {{ this.j8AttrsAndElems.set(data); }}", template.ModelName ?? "any");
             }
             sb.AppendLine("");
 

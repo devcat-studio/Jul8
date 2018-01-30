@@ -33,7 +33,7 @@ class MyTable_TR_d implements Jul8.Element
     }
     
     private j8AttrsAndElems: Jul8.AttrsAndElems;
-    set(data: any): void { this.j8AttrsAndElems.set(data); }
+    set(data: SampleData): void { this.j8AttrsAndElems.set(data); }
 }
 
 class Button_d implements Jul8.Element
