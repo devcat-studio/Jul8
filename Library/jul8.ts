@@ -44,7 +44,10 @@ namespace Jul8 {
 
         set(data: any): void {
             for (let e of this.elems) {
-                e.elem.textContent = this.replace(e.origText, data);
+                var newText = this.replace(e.origText, data);
+                if (e.elem.textContent !== newText) {
+                    e.elem.textContent = newText;
+                }
             }
         }
 
