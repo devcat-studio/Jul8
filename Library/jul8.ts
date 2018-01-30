@@ -47,7 +47,7 @@
                     let itemId = v.getAttribute('data-listItemId');
 
                     if (this.lists[itemId]) {
-                        alert('duplicate listItem id: [' + itemId + ']')
+                        console.log('(Jul8) duplicate listItem id: [' + itemId + ']')
                     }
 
                     let j = $(v);
@@ -63,7 +63,7 @@
                     let cid = v.getAttribute('data-controlId');
 
                     if (this.controls[cid]) {
-                        alert('duplicate control id: [' + cid + ']')
+                        console.log('(Jul8) duplicate control id: [' + cid + ']')
                     }
                     this.controls[cid] = $(v);
                 });
@@ -72,7 +72,7 @@
         C(controlId: string): JQuery {
             let ctl = this.controls[controlId];
             if (ctl === undefined) {
-                alert('no such control: [' + controlId + ']');
+                console.log('(Jul8) no such control: [' + controlId + ']');
             }
             return ctl;
         }
@@ -80,7 +80,7 @@
         L<T extends Element>(listItemId: string): ElementList<T> {
             let it = this.lists[listItemId];
             if (it === undefined) {
-                alert('no such listItem: [' + listItemId + ']');
+                console.log('(Jul8) no such listItem: [' + listItemId + ']');
             }
             return new ElementList<T>(it.list, it.itemTemplate);
         }
@@ -114,7 +114,7 @@
         cloneTemplate(templateId: string): JQuery {
             let t = this.templates[templateId];
             if (t === undefined) {
-                alert('no such template: [' + templateId + ']');
+                console.log('(Jul8) no such template: [' + templateId + ']');
             }
             return t.clone();
         }
