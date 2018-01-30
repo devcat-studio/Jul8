@@ -76,9 +76,9 @@ namespace Jul8 {
         constructor(root: JQuery) {
             // 리스트 항목은 부모로부터 뗀다.
             // 그래야 처음에는 없고, 추가하는 만큼 붙일 수 있으니까.
-            root.find('[data-listItemId]').each(
+            root.find('[j8-listItem]').each(
                 (i, v) => {
-                    let itemId = v.getAttribute('data-listItemId');
+                    let itemId = v.getAttribute('j8-listItem');
 
                     if (this.lists[itemId]) {
                         console.log('(Jul8) duplicate listItem id: [' + itemId + ']')
@@ -92,9 +92,9 @@ namespace Jul8 {
 
             // 템플릿과 다르게 컨트롤들은 부모로부터 떼지 않는다.
             // 이미 템플릿 단위로 복제 생성된 상태이기 때문.
-            root.find('[data-controlId]').each(
+            root.find('[j8-control]').each(
                 (i, v) => {
-                    let cid = v.getAttribute('data-controlId');
+                    let cid = v.getAttribute('j8-control');
 
                     if (this.controls[cid]) {
                         console.log('(Jul8) duplicate control id: [' + cid + ']')
@@ -153,11 +153,11 @@ namespace Jul8 {
         }
 
         addTemplateRoot(root: JQuery): void {
-            root.find('[data-templateId]').each(
+            root.find('[j8-template]').each(
                 (i, v) => {
                     let j = $(v);
                     j.detach();
-                    let tid = v.getAttribute('data-templateId');
+                    let tid = v.getAttribute('j8-template');
                     this.templates[tid] = j;
                 });
         }

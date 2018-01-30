@@ -43,7 +43,7 @@ namespace Jul8Compiler
             var rootNode = doc.DocumentNode.SelectSingleNode("//body/div");
             var templateNodes = doc.DocumentNode
                 .SelectNodes("//*")
-                .Where(x => x.GetAttributeValue("data-templateId", null) != null);
+                .Where(x => x.GetAttributeValue("j8-template", null) != null);
 
             // template들을 트리에서 뗀다.
             // 그대로 둔 상태로 처리하면 템플릿 안에 템플릿이 들어있을 때
@@ -65,15 +65,15 @@ namespace Jul8Compiler
         {
             var template = new Template();
             var attrName = (namePrefix == "")
-                ? "data-templateId"
-                : "data-listItemId";
+                ? "j8-template"
+                : "j8-listItem";
             template.TemplateId = templateNode.Attributes[attrName].Value;
             template.ClassName = namePrefix + template.TemplateId;
 
             var childNodes = templateNode.SelectNodes(".//*");
             if (childNodes != null)
             {
-                var listItemNodes = childNodes.Where(x => x.GetAttributeValue("data-listItemId", null) != null);
+                var listItemNodes = childNodes.Where(x => x.GetAttributeValue("j8-listItem", null) != null);
                 foreach (var node in listItemNodes)
                 {
                     node.Remove(); // 지금 떼어놔야 바로 다음에 컨트롤 검색에서 빠진다.
@@ -81,14 +81,14 @@ namespace Jul8Compiler
                 }
             }
 
-            // data-listItemId 붙은 것들을 뗀 상태에서 다시 검색한다
+            // j8-listItem 붙은 것들을 뗀 상태에서 다시 검색한다
             childNodes = templateNode.SelectNodes(".//*");
             if (childNodes != null)
             {
-                var controlNodes = childNodes.Where(x => x.GetAttributeValue("data-controlId", null) != null);
+                var controlNodes = childNodes.Where(x => x.GetAttributeValue("j8-control", null) != null);
                 foreach (var controlNode in controlNodes)
                 {
-                    var controlId = controlNode.Attributes["data-controlId"].Value; ;
+                    var controlId = controlNode.Attributes["j8-control"].Value; ;
                     template.Controls.Add(controlId);
                 }
             }
