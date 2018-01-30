@@ -18,16 +18,12 @@ class MyTable_d implements Jul8.Element
 class MyTable_TR_d implements Jul8.Element
 {
     $: JQuery;
-    num: JQuery;
-    content: JQuery;
     btnRemove: JQuery;
     
     constructor($: JQuery)
     {
         this.$ = $;
         let s = new Jul8.Scanner(this.$);
-        this.num = s.C('num');
-        this.content = s.C('content');
         this.btnRemove = s.C('btnRemove');
     }
 }

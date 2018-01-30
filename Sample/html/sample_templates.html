@@ -30,8 +30,8 @@
             </thead>
             <tbody>
                 <tr data-listItemId="TR" style="cursor: pointer">
-                    <td data-controlId="num" color="blue"></td>
-                    <td data-controlId="content" color="red"></td>
+                    <td>{{num}}</td>
+                    <td style="color: {{color}}">템플릿 스타일로 설정하는 {{ num }}번째 행 (두번째 등장한 숫자 {{ num}}) (없을때는 {{xxx}})</td>
                     <td>
                         <button data-controlId="btnRemove" class="btn btn-default btn-xs">지우기</button>
                     </td>
