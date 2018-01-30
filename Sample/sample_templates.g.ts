@@ -11,8 +11,12 @@ class MyTable_d implements Jul8.Element
         this.$ = templateHolder.cloneTemplate('MyTable');
         if (parentNode) { parentNode.append(this.$); }
         let s = new Jul8.Scanner(this.$);
+        this.j8AttrsAndElems = s.attrsAndElems;
         this.listOf_TR = s.L<MyTable_TR_d>('TR');
     }
+    
+    private j8AttrsAndElems: Jul8.AttrsAndElems;
+    set(data: any): void { this.j8AttrsAndElems.set(data); }
 }
 
 class MyTable_TR_d implements Jul8.Element
@@ -24,8 +28,12 @@ class MyTable_TR_d implements Jul8.Element
     {
         this.$ = $;
         let s = new Jul8.Scanner(this.$);
+        this.j8AttrsAndElems = s.attrsAndElems;
         this.btnRemove = s.C('btnRemove');
     }
+    
+    private j8AttrsAndElems: Jul8.AttrsAndElems;
+    set(data: any): void { this.j8AttrsAndElems.set(data); }
 }
 
 class Button_d implements Jul8.Element
@@ -37,5 +45,9 @@ class Button_d implements Jul8.Element
         this.$ = templateHolder.cloneTemplate('Button');
         if (parentNode) { parentNode.append(this.$); }
         let s = new Jul8.Scanner(this.$);
+        this.j8AttrsAndElems = s.attrsAndElems;
     }
+    
+    private j8AttrsAndElems: Jul8.AttrsAndElems;
+    set(data: any): void { this.j8AttrsAndElems.set(data); }
 }

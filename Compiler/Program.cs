@@ -154,6 +154,7 @@ namespace Jul8Compiler
                         sb.AppendLine("this.$ = $;");
                     }
                     sb.AppendLine("let s = new Jul8.Scanner(this.$);");
+                    sb.AppendLine("this.j8AttrsAndElems = s.attrsAndElems;");
 
                     foreach (var controlId in template.Controls)
                     {
@@ -165,6 +166,9 @@ namespace Jul8Compiler
                         sb.AppendFormat("this.listOf_{0} = s.L<{1}_d>('{0}');", listItem.TemplateId, listItem.ClassName);
                     }
                 }
+                sb.AppendLine("");
+                sb.AppendLine("private j8AttrsAndElems: Jul8.AttrsAndElems;");
+                sb.AppendLine("set(data: any): void { this.j8AttrsAndElems.set(data); }");
             }
             sb.AppendLine("");
 

@@ -1,4 +1,6 @@
-﻿namespace Jul8 {
+﻿type DomElement = Element;
+
+namespace Jul8 {
     export interface Element {
         $: JQuery;
     }
@@ -35,9 +37,42 @@
         }
     }
 
+    let pattern = /({{[^}]+}})/g;
+
+    export class AttrsAndElems {
+        attrs: { attr: Attr, origValue: string }[] = [];
+        elems: { elem: DomElement, origText: string }[] = [];
+
+        set(data: any): void {
+            for (let a of this.attrs) {
+                a.attr.value = this.replace(a.origValue, data);
+            }
+            for (let e of this.elems) {
+                e.elem.textContent = this.replace(e.origText, data);
+            }
+        }
+
+        private replace(text: string, data: any): string {
+            let list = text.split(pattern);
+            for (let i = 0; i < list.length; ++i) {
+                let word = list[i]
+                if (word.startsWith("{{") && word.endsWith("}}")) {
+                    let fname = word.substr(2, word.length - 4).trim();
+                    if (data[fname] !== undefined) {
+                        list[i] = data[fname];
+                    } else {
+                        console.log('(Jul8) field not found: [' + fname + ']')
+                    }
+                }
+            }
+            return list.join('');
+        }
+    };
+
     export class Scanner {
         controls: { [key: string]: JQuery } = {};
         lists: { [key: string]: { list: JQuery, itemTemplate: JQuery } } = {};
+        attrsAndElems: AttrsAndElems = new AttrsAndElems();
 
         constructor(root: JQuery) {
             // 리스트 항목은 부모로부터 뗀다.
@@ -67,6 +102,31 @@
                     }
                     this.controls[cid] = $(v);
                 });
+
+            this.visitElem(root.get(0));
+        }
+
+        private visitElem(elem: DomElement) {
+            let childNodes = elem.children;
+            if (childNodes.length > 0) {
+                for (let i = 0; i < childNodes.length; ++i) {
+                    this.visitElem(childNodes[i])
+                }
+            }
+            else {
+                if (elem.textContent.search(pattern) >= 0) {
+                    let e = { elem: elem, origText: elem.textContent };
+                    this.attrsAndElems.elems.push(e);
+                }
+            }
+
+            for (let i = 0; i < elem.attributes.length; ++i) {
+                let attr = elem.attributes[i];
+                if (attr.value.search(pattern) >= 0) {
+                    let a = { attr: attr, origValue: attr.value };
+                    this.attrsAndElems.attrs.push(a);
+                }
+            }
         }
 
         C(controlId: string): JQuery {

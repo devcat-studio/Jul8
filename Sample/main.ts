@@ -1,50 +1,5 @@
 ﻿/// <reference path='sample_templates.g.ts' />
 
-let pattern = /({{[^}]+}})/g;
-
-function replace(text: string, data: any): string {
-    if (text.search(pattern) < 0) {
-        return undefined;
-    }
-
-    let list = text.split(pattern);
-    for (let i = 0; i < list.length; ++i) {
-        let word = list[i]
-        if (word.startsWith("{{") && word.endsWith("}}")) {
-            let fname = word.substr(2, word.length - 4).trim();
-            if (data[fname] !== undefined) {
-                list[i] = data[fname];
-            } else {
-                console.log('(Jul8) field not found: [' + fname + ']')
-            }
-        }
-    }
-    return list.join('');
-}
-
-function visitElem(elem: Element, data: any) {
-    let childNodes = elem.children;
-    if (childNodes.length > 0) {
-        for (let i = 0; i < childNodes.length; ++i) {
-            visitElem(childNodes[i], data)
-        }
-    }
-    else {
-        let alt = replace(elem.textContent, data)
-        if (alt !== undefined) {
-            elem.textContent = alt
-        }
-    }
-
-    for (let i = 0; i < elem.attributes.length; ++i) {
-        let attr = elem.attributes[i];
-        let alt = replace(attr.value, data);
-        if (alt !== undefined) {
-            attr.value = alt;
-        }
-    }
-}
-
 //-------------------------------------------------------
 // 상속해서 만든 예제.
 // 꼭 상속해서 만들어야만 하는 것은 아니다.
@@ -62,7 +17,11 @@ class MyTable extends MyTable_d {
 
         var tr = this.listOf_TR.add(MyTable_TR_d);
         let n = ++this.count;
-        visitElem(tr.$.get(0), { num: n, color: 'red' });
+
+        // 덮어씌우기가 제대로 되는지 확인하기 위해 쓰레기값을 넣는다
+        tr.set({ num: 0, color: 'asdfasdf' });
+
+        tr.set({ num: n, color: 'red' });
         tr.btnRemove.click(() => this.listOf_TR.remove(tr));
     }
 }
