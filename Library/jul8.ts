@@ -39,7 +39,7 @@ namespace Jul8 {
 
     let pattern = /({{[^}]+}})/g;
 
-    export class AttrsAndElems {
+    export class Fields {
         elems: { elem: DomElement, origText: string }[] = [];
 
         set(data: any): void {
@@ -71,9 +71,9 @@ namespace Jul8 {
     export class Scanner {
         controls: { [key: string]: JQuery } = {};
         lists: { [key: string]: { list: JQuery, itemTemplate: JQuery } } = {};
-        attrsAndElems: AttrsAndElems = new AttrsAndElems();
+        fields: Fields;
 
-        constructor(root: JQuery) {
+        constructor(root: JQuery, scanFields: boolean) {
             // 리스트 항목은 부모로부터 뗀다.
             // 그래야 처음에는 없고, 추가하는 만큼 붙일 수 있으니까.
             root.find('[j8-listItem]').each(
@@ -102,7 +102,10 @@ namespace Jul8 {
                     this.controls[cid] = $(v);
                 });
 
-            this.visitElem(root.get(0));
+            if (scanFields) {
+                this.fields = new Fields();
+                this.visitElem(root.get(0));
+            }
         }
 
         private visitElem(elem: DomElement) {
@@ -115,7 +118,7 @@ namespace Jul8 {
             else {
                 if (elem.textContent.search(pattern) >= 0) {
                     let e = { elem: elem, origText: elem.textContent };
-                    this.attrsAndElems.elems.push(e);
+                    this.fields.elems.push(e);
                 }
             }
         }

@@ -10,13 +10,9 @@ class MyTable_d implements Jul8.Element
     {
         this.$ = templateHolder.cloneTemplate('MyTable');
         if (parentNode) { parentNode.append(this.$); }
-        let s = new Jul8.Scanner(this.$);
-        this.j8AttrsAndElems = s.attrsAndElems;
+        let s = new Jul8.Scanner(this.$, false);
         this.listOf_TR = s.L<MyTable_TR_d>('TR');
     }
-    
-    private j8AttrsAndElems: Jul8.AttrsAndElems;
-    set(data: any): void { this.j8AttrsAndElems.set(data); }
 }
 
 class MyTable_TR_d implements Jul8.Element
@@ -27,13 +23,16 @@ class MyTable_TR_d implements Jul8.Element
     constructor($: JQuery)
     {
         this.$ = $;
-        let s = new Jul8.Scanner(this.$);
-        this.j8AttrsAndElems = s.attrsAndElems;
+        let s = new Jul8.Scanner(this.$, true);
+        this.j8fields = s.fields;
         this.btnRemove = s.C('btnRemove');
     }
     
-    private j8AttrsAndElems: Jul8.AttrsAndElems;
-    set(data: SampleData): void { this.j8AttrsAndElems.set(data); }
+    private j8fields: Jul8.Fields;
+    set(data: SampleData): void
+    {
+        this.j8fields.set(data);
+    }
 }
 
 class Button_d implements Jul8.Element
@@ -44,10 +43,13 @@ class Button_d implements Jul8.Element
     {
         this.$ = templateHolder.cloneTemplate('Button');
         if (parentNode) { parentNode.append(this.$); }
-        let s = new Jul8.Scanner(this.$);
-        this.j8AttrsAndElems = s.attrsAndElems;
+        let s = new Jul8.Scanner(this.$, true);
+        this.j8fields = s.fields;
     }
     
-    private j8AttrsAndElems: Jul8.AttrsAndElems;
-    set(data: any): void { this.j8AttrsAndElems.set(data); }
+    private j8fields: Jul8.Fields;
+    set(data: Button): void
+    {
+        this.j8fields.set(data);
+    }
 }

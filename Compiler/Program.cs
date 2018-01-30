@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Jul8Compiler
 {
@@ -92,10 +93,23 @@ namespace Jul8Compiler
                     var controlId = controlNode.Attributes["j8-control"].Value; ;
                     template.Controls.Add(controlId);
                 }
+
+                foreach (var node in childNodes)
+                {
+                    var matched = pattern.Matches(node.InnerText);
+                    foreach (var m in matched)
+                    {
+                        var s = m.ToString();
+                        s = s.Substring(2, s.Length - 4).Trim();
+                        Console.WriteLine(m.ToString().Substring(2, );
+                    }
+                }
             }
 
             return template;
         }
+
+        static Regex pattern = new Regex("({{[^}]+}})");
 
         static void GenerateTypeScript(ConfigRoot config, List<Template> templates, string path)
         {
@@ -119,8 +133,9 @@ namespace Jul8Compiler
 
         static void GenerateClass(CodeBuilder sb, Template template, bool isRoot)
         {
-            sb.AppendFormat("class {0}_d implements Jul8.Element", template.ClassName);
+            bool useModel = (template.Fields.Count > 0 || template.ModelName != null);
 
+            sb.AppendFormat("class {0}_d implements Jul8.Element", template.ClassName);
             using (sb.Indent("{", "}"))
             {
                 sb.AppendLine("$: JQuery;");
@@ -154,8 +169,11 @@ namespace Jul8Compiler
                     {
                         sb.AppendLine("this.$ = $;");
                     }
-                    sb.AppendLine("let s = new Jul8.Scanner(this.$);");
-                    sb.AppendLine("this.j8AttrsAndElems = s.attrsAndElems;");
+                    sb.AppendFormat("let s = new Jul8.Scanner(this.$, {0});", (useModel ? "true" : "false"));
+                    if (useModel)
+                    {
+                        sb.AppendLine("this.j8fields = s.fields;");
+                    }
 
                     foreach (var controlId in template.Controls)
                     {
@@ -167,9 +185,24 @@ namespace Jul8Compiler
                         sb.AppendFormat("this.listOf_{0} = s.L<{1}_d>('{0}');", listItem.TemplateId, listItem.ClassName);
                     }
                 }
-                sb.AppendLine("");
-                sb.AppendLine("private j8AttrsAndElems: Jul8.AttrsAndElems;");
-                sb.AppendFormat("set(data: {0}): void {{ this.j8AttrsAndElems.set(data); }}", template.ModelName ?? "any");
+
+                if (template.Fields.Count > 0 || template.ModelName != null)
+                {
+                    sb.AppendLine("");
+                    sb.AppendLine("private j8fields: Jul8.Fields;");
+                    sb.AppendFormat("set(data: {0}): void", template.ModelName ?? "any");
+                    using (sb.Indent("{", "}"))
+                    {
+                        if (template.ModelName != null)
+                        {
+                            foreach (var f in template.Fields)
+                            {
+                                sb.AppendFormat("data.{0};", f);
+                            }
+                        }
+                        sb.AppendLine("this.j8fields.set(data);");
+                    }
+                }
             }
             sb.AppendLine("");
 

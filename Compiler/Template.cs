@@ -9,5 +9,6 @@ namespace Jul8Compiler
         public string ModelName;
         public List<string> Controls = new List<string>();
         public List<Template> ListItems = new List<Template>();
+        public HashSet<string> Fields = new HashSet<string>();
     }
 }
