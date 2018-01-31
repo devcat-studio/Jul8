@@ -1,11 +1,9 @@
-﻿type DomElement = Element;
-
-namespace Jul8 {
-    export interface Element {
+﻿namespace Jul8 {
+    export interface View {
         $: JQuery;
     }
 
-    export class ElementList<T extends Element> {
+    export class ViewList<T extends View> {
         private root: JQuery;
         private tmpl: JQuery;
         private list: T[] = [];
@@ -40,7 +38,7 @@ namespace Jul8 {
     let pattern = /({{[^}]+}})/g;
 
     export class Fields {
-        elems: { elem: DomElement, origText: string }[] = [];
+        elems: { elem: Element, origText: string }[] = [];
 
         set(data: any): void {
             for (let e of this.elems) {
@@ -108,7 +106,7 @@ namespace Jul8 {
             }
         }
 
-        private visitElem(elem: DomElement) {
+        private visitElem(elem: Element) {
             let childNodes = elem.children;
             if (childNodes.length > 0) {
                 for (let i = 0; i < childNodes.length; ++i) {
@@ -131,12 +129,12 @@ namespace Jul8 {
             return ctl;
         }
 
-        L<T extends Element>(listItemId: string): ElementList<T> {
+        L<T extends View>(listItemId: string): ViewList<T> {
             let it = this.lists[listItemId];
             if (it === undefined) {
                 console.log('(Jul8) no such listItem: [' + listItemId + ']');
             }
-            return new ElementList<T>(it.list, it.itemTemplate);
+            return new ViewList<T>(it.list, it.itemTemplate);
         }
     }
 

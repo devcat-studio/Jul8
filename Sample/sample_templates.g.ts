@@ -1,10 +1,10 @@
 ﻿/// <reference path='../Library/jul8.ts' />
 /// <reference path='../Library/jquery.d.ts' />
 
-class MyTable_d implements Jul8.Element
+class MyTable_d implements Jul8.View
 {
     $: JQuery;
-    listOf_TR: Jul8.ElementList<MyTable_TR_d>;
+    listOf_TR: Jul8.ViewList<MyTable_TR_d>;
     
     constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
     {
@@ -15,7 +15,7 @@ class MyTable_d implements Jul8.Element
     }
 }
 
-class MyTable_TR_d implements Jul8.Element
+class MyTable_TR_d implements Jul8.View
 {
     $: JQuery;
     btnRemove: JQuery;
@@ -36,7 +36,7 @@ class MyTable_TR_d implements Jul8.Element
     }
 }
 
-class Button_d implements Jul8.Element
+class Button_d implements Jul8.View
 {
     $: JQuery;
     

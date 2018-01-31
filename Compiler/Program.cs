@@ -142,7 +142,7 @@ namespace Jul8Compiler
         {
             bool useModel = (template.Fields.Count > 0 || template.ModelName != null);
 
-            sb.AppendFormat("class {0}_d implements Jul8.Element", template.ClassName);
+            sb.AppendFormat("class {0}_d implements Jul8.View", template.ClassName);
             using (sb.Indent("{", "}"))
             {
                 sb.AppendLine("$: JQuery;");
@@ -152,7 +152,7 @@ namespace Jul8Compiler
                 }
                 foreach (var listItem in template.ListItems)
                 {
-                    sb.AppendFormat("listOf_{0}: Jul8.ElementList<{1}_d>;", listItem.TemplateId, listItem.ClassName);
+                    sb.AppendFormat("listOf_{0}: Jul8.ViewList<{1}_d>;", listItem.TemplateId, listItem.ClassName);
                 }
                 sb.AppendLine();
 
