@@ -4,6 +4,10 @@ type SampleData = {
     num: number;
 };
 
+type ButtonDesc = {
+    caption: string;
+}
+
 //-------------------------------------------------------
 // 상속해서 만든 예제.
 // 꼭 상속해서 만들어야만 하는 것은 아니다.
@@ -41,7 +45,7 @@ $(document).ready(
 
         let parent = $('#PANEL_BODY');
         let addBtn = new Button_d(g_jul8, parent);
-        addBtn.$.text("새 항목 추가!")
+        addBtn.set({ caption: "새 항목 추가!" });
 
         let myTable = new MyTable(parent);
         addBtn.$.click(() => myTable.addNewItem());

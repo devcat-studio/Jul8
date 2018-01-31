@@ -96,17 +96,24 @@ namespace Jul8Compiler
 
                 foreach (var node in childNodes)
                 {
-                    var matched = pattern.Matches(node.InnerText);
-                    foreach (var m in matched)
-                    {
-                        var s = m.ToString();
-                        s = s.Substring(2, s.Length - 4).Trim();
-                        Console.WriteLine(m.ToString().Substring(2, );
-                    }
+                    CheckNode(template, node);
                 }
             }
 
+            CheckNode(template, templateNode);
+
             return template;
+        }
+
+        static void CheckNode(Template template, HtmlNode node)
+        {
+            var matched = pattern.Matches(node.InnerText);
+            foreach (var m in matched)
+            {
+                var s = m.ToString();
+                s = s.Substring(2, s.Length - 4).Trim();
+                template.Fields.Add(s);
+            }
         }
 
         static Regex pattern = new Regex("({{[^}]+}})");

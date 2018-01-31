@@ -31,6 +31,7 @@ class MyTable_TR_d implements Jul8.Element
     private j8fields: Jul8.Fields;
     set(data: SampleData): void
     {
+        data.num;
         this.j8fields.set(data);
     }
 }
@@ -48,8 +49,9 @@ class Button_d implements Jul8.Element
     }
     
     private j8fields: Jul8.Fields;
-    set(data: Button): void
+    set(data: ButtonDesc): void
     {
+        data.caption;
         this.j8fields.set(data);
     }
 }
