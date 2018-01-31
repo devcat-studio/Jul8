@@ -32,6 +32,7 @@ class MyTable_TR_d implements Jul8.View
     set(data: SampleData): void
     {
         data.num;
+        data.inNum;
         this.j8fields.set(data);
     }
 }

@@ -107,13 +107,26 @@ namespace Jul8Compiler
 
         static void CheckNode(Template template, HtmlNode node)
         {
-            var matched = pattern.Matches(node.InnerText);
-            foreach (var m in matched)
+            var textMatched = pattern.Matches(node.InnerText);
+            foreach (var m in textMatched)
             {
-                var s = m.ToString();
-                s = s.Substring(2, s.Length - 4).Trim();
-                template.Fields.Add(s);
+                ParseAndAddField(template, m.ToString());
             }
+
+            foreach (var a in node.Attributes)
+            {
+                var attrMatched = pattern.Matches(a.Value);
+                foreach (var m in attrMatched)
+                {
+                    ParseAndAddField(template, m.ToString());
+                }
+            }
+        }
+
+        static void ParseAndAddField(Template template, string matched)
+        {
+            var fname = matched.Substring(2, matched.Length - 4).Trim();
+            template.Fields.Add(fname);
         }
 
         static Regex pattern = new Regex("({{[^}]+}})");
