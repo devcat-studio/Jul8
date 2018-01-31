@@ -65,7 +65,7 @@
                     if (data[fname] !== undefined) {
                         list[i] = data[fname];
                     } else {
-                        console.log('(Jul8) field not found: [' + fname + ']')
+                        console.error('(Jul8) field not found: [' + fname + ']')
                     }
                 }
             }
@@ -86,7 +86,7 @@
                     let itemId = v.getAttribute('j8-listItem');
 
                     if (this.lists[itemId]) {
-                        console.log('(Jul8) duplicate listItem id: [' + itemId + ']')
+                        console.error('(Jul8) duplicate listItem id: [' + itemId + ']')
                     }
 
                     let j = $(v);
@@ -102,7 +102,7 @@
                     let cid = v.getAttribute('j8-control');
 
                     if (this.controls[cid]) {
-                        console.log('(Jul8) duplicate control id: [' + cid + ']')
+                        console.error('(Jul8) duplicate control id: [' + cid + ']')
                     }
                     this.controls[cid] = $(v);
                 });
@@ -139,7 +139,7 @@
         C(controlId: string): JQuery {
             let ctl = this.controls[controlId];
             if (ctl === undefined) {
-                console.log('(Jul8) no such control: [' + controlId + ']');
+                console.error('(Jul8) no such control: [' + controlId + ']');
             }
             return ctl;
         }
@@ -147,7 +147,7 @@
         L<T extends View>(listItemId: string): ViewList<T> {
             let it = this.lists[listItemId];
             if (it === undefined) {
-                console.log('(Jul8) no such listItem: [' + listItemId + ']');
+                console.error('(Jul8) no such listItem: [' + listItemId + ']');
             }
             return new ViewList<T>(it.list, it.itemTemplate);
         }
@@ -181,7 +181,7 @@
         cloneTemplate(templateId: string): JQuery {
             let t = this.templates[templateId];
             if (t === undefined) {
-                console.log('(Jul8) no such template: [' + templateId + ']');
+                console.error('(Jul8) no such template: [' + templateId + ']');
             }
             return t.clone();
         }
