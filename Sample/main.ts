@@ -33,6 +33,11 @@ class MyTable extends MyTable_d {
         tr.set({ num: n, inNum: n });
 
         tr.btnRemove.click(() => this.listOf_TR.remove(tr));
+
+        tr.btnReflect.click(() => {
+            let v = tr.inNum.val();
+            tr.set({ num: v, inNum: v });
+        });
     }
 }
 

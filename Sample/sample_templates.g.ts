@@ -18,6 +18,8 @@ class MyTable_d implements Jul8.View
 class MyTable_TR_d implements Jul8.View
 {
     $: JQuery;
+    inNum: JQuery;
+    btnReflect: JQuery;
     btnRemove: JQuery;
     
     constructor($: JQuery)
@@ -25,6 +27,8 @@ class MyTable_TR_d implements Jul8.View
         this.$ = $;
         let s = new Jul8.Scanner(this.$, true);
         this.j8fields = s.fields;
+        this.inNum = s.C('inNum');
+        this.btnReflect = s.C('btnReflect');
         this.btnRemove = s.C('btnRemove');
     }
     

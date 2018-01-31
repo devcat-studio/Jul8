@@ -130,6 +130,8 @@
             for (let i = 0; i < elem.attributes.length; ++i) {
                 let attr = elem.attributes[i];
                 if (attr.value.search(pattern) >= 0) {
+                    if (attr.name === 'style') { console.error("(Jul8) can't use {{ ... }} notation in `style` attribute."); }
+                    if (attr.name === 'class') { console.error("(Jul8) can't use {{ ... }} notation in `class` attribute."); }
                     let a = { attr: attr, origValue: attr.value };
                     this.fields.attrs.push(a);
                 }
