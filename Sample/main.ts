@@ -2,6 +2,7 @@
 
 type SampleData = {
     num: number;
+    inNum: number;
 };
 
 type ButtonDesc = {
@@ -27,9 +28,9 @@ class MyTable extends MyTable_d {
         let n = ++this.count;
 
         // 덮어씌우기가 제대로 되는지 확인하기 위해 한 번 쓰레기값을 넣는다
-        tr.set({ num: 0 });
+        tr.set({ num: 0, inNum: 0 });
 
-        tr.set({ num: n });
+        tr.set({ num: n, inNum: n });
 
         tr.btnRemove.click(() => this.listOf_TR.remove(tr));
     }

@@ -38,9 +38,16 @@
     let pattern = /({{[^}]+}})/g;
 
     export class Fields {
+        attrs: { attr: Attr, origValue: string }[] = [];
         elems: { elem: Element, origText: string }[] = [];
 
         set(data: any): void {
+            for (let a of this.attrs) {
+                var newValue = this.replace(a.origValue, data);
+                if (a.attr.value !== newValue) {
+                    a.attr.value = newValue;
+                }
+            }
             for (let e of this.elems) {
                 var newText = this.replace(e.origText, data);
                 if (e.elem.textContent !== newText) {
@@ -117,6 +124,14 @@
                 if (elem.textContent.search(pattern) >= 0) {
                     let e = { elem: elem, origText: elem.textContent };
                     this.fields.elems.push(e);
+                }
+            }
+
+            for (let i = 0; i < elem.attributes.length; ++i) {
+                let attr = elem.attributes[i];
+                if (attr.value.search(pattern) >= 0) {
+                    let a = { attr: attr, origValue: attr.value };
+                    this.fields.attrs.push(a);
                 }
             }
         }
