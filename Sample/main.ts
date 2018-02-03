@@ -39,6 +39,22 @@ class MyTable extends MyTable_d {
             tr.set({ num: v, inNum: v });
         });
     }
+
+    summarize(): string {
+        let rv = this.listOf_TR.length + '개의 항목이 있습니다.';
+
+        rv += 'forEach로 순회: [ ';
+        this.listOf_TR.forEach((v, i) => {
+            rv += v.num.text() + ' ';
+        });
+        rv += '] getAt으로 순회: [ ';
+        for (let i = 0; i < this.listOf_TR.length; ++i) {
+            rv += this.listOf_TR.getAt(i).num.text() + ' ';
+        }
+        rv += ']';
+
+        return rv;
+    }
 }
 
 //-------------------------------------------------------
@@ -50,14 +66,29 @@ $(document).ready(
         g_jul8.addTemplateRoot($('#TEMPLATE_HOLDER_ROOT'));
 
         let parent = $('#PANEL_BODY');
-        let addBtn = new Button_d(g_jul8, parent);
-        addBtn.set({ caption: "새 항목 추가!" });
+
+        let buttons = new Buttons_d(g_jul8, parent);
+
+        buttons.add.click(() => {
+            myTable.addNewItem();
+            buttons.summary.text(myTable.summarize());
+        });
+
+        buttons.removeAt.click(() => {
+            let idx = parseInt(buttons.removeIdx.val());
+            myTable.listOf_TR.removeAt(idx);
+            buttons.summary.text(myTable.summarize());
+        });
+
+        buttons.empty.click(() => {
+            myTable.listOf_TR.empty();
+            buttons.summary.text(myTable.summarize());
+        });
 
         let myTable = new MyTable(parent);
-        addBtn.$.click(() => myTable.addNewItem());
-
         myTable.addNewItem();
         myTable.addNewItem();
         myTable.addNewItem();
         myTable.addNewItem();
+        buttons.summary.text(myTable.summarize());
     });

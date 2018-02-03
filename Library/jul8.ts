@@ -1,4 +1,6 @@
-﻿namespace Jul8 {
+﻿/// <reference path="jquery.d.ts" />
+
+namespace Jul8 {
     export interface View {
         $: JQuery;
     }
@@ -7,6 +9,7 @@
         private root: JQuery;
         private tmpl: JQuery;
         private list: T[] = [];
+        length: number;
 
         constructor($: JQuery, tmpl: JQuery) {
             this.root = $;
@@ -17,20 +20,41 @@
             let newNode = this.tmpl.clone();
             let child = new type(newNode);
             this.list.push(child);
+            this.length = this.list.length;
             this.root.append(newNode);
             return child;
         }
 
         remove(child: T): void {
             let idx = this.list.indexOf(child);
-            if (idx >= 0) {
+            if(idx >= 0) {
                 this.list.splice(idx, 1);
+                this.length = this.list.length;
                 child.$.remove();
             }
         }
 
-        forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void
-        {
+        removeAt(idx: number): void {
+            if (idx < 0) {
+                idx = this.list.length + idx;
+            }
+            let child = this.list[idx];
+            this.list.splice(idx, 1);
+            this.length = this.list.length;
+            child.$.remove();
+        }
+
+        empty(): void {
+            this.list = [];
+            this.length = 0;
+            this.root.empty();
+        }
+
+        getAt(idx: number): T {
+            return this.list[idx];
+        }
+
+        forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void {
             this.list.forEach(callbackfn, thisArg);
         }
     }

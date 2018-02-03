@@ -20,6 +20,18 @@
     <div id='TEMPLATE_HOLDER_ROOT' style='display:none;'>
         <!-- ########################################################################### -->
         $(TemplateBegin)
+        <div j8-template="Buttons">
+            <button j8-control="add" class="btn btn-info">새 항목 추가</button>
+            <br>
+            <input j8-control="removeIdx" type="text" value="0" style="width: 30pt" />
+            <button j8-control="removeAt" class="btn btn-info">번째 지우기</button>
+            <br>
+            <button j8-control="empty" class="btn btn-info">모두 지우기</button>
+            <div j8-control="summary">
+
+            </div>
+        </div>
+        <br />
         <table j8-template="MyTable" class="table table-hover">
             <thead>
                 <tr>
@@ -31,7 +43,9 @@
             </thead>
             <tbody>
                 <tr j8-listItem="TR" style="cursor: pointer" j8-model="SampleData">
-                    <td>{{num}}</td>
+                    <td j8-control="num">
+                        {{ num }}
+                    </td>
                     <td>
                         템플릿 스타일로 설정하는 {{ num }}번째 행 (두번째 등장한 숫자 {{ num}})
                     </td>
@@ -45,8 +59,6 @@
                 </tr>
             </tbody>
         </table>
-
-        <button j8-template="Button" class="btn btn-info" j8-model="ButtonDesc">{{caption}}</button>
 
         $(TemplateEnd)
         <!-- ########################################################################### -->

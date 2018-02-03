@@ -1,6 +1,28 @@
 ﻿/// <reference path='../Library/jul8.ts' />
 /// <reference path='../Library/jquery.d.ts' />
 
+class Buttons_d implements Jul8.View
+{
+    $: JQuery;
+    add: JQuery;
+    removeIdx: JQuery;
+    removeAt: JQuery;
+    empty: JQuery;
+    summary: JQuery;
+    
+    constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
+    {
+        this.$ = templateHolder.cloneTemplate('Buttons');
+        if (parentNode) { parentNode.append(this.$); }
+        let s = new Jul8.Scanner(this.$, false);
+        this.add = s.C('add');
+        this.removeIdx = s.C('removeIdx');
+        this.removeAt = s.C('removeAt');
+        this.empty = s.C('empty');
+        this.summary = s.C('summary');
+    }
+}
+
 class MyTable_d implements Jul8.View
 {
     $: JQuery;
@@ -18,6 +40,7 @@ class MyTable_d implements Jul8.View
 class MyTable_TR_d implements Jul8.View
 {
     $: JQuery;
+    num: JQuery;
     inNum: JQuery;
     btnReflect: JQuery;
     btnRemove: JQuery;
@@ -27,6 +50,7 @@ class MyTable_TR_d implements Jul8.View
         this.$ = $;
         let s = new Jul8.Scanner(this.$, true);
         this.j8fields = s.fields;
+        this.num = s.C('num');
         this.inNum = s.C('inNum');
         this.btnReflect = s.C('btnReflect');
         this.btnRemove = s.C('btnRemove');
@@ -37,26 +61,6 @@ class MyTable_TR_d implements Jul8.View
     {
         data.num;
         data.inNum;
-        this.j8fields.set(data);
-    }
-}
-
-class Button_d implements Jul8.View
-{
-    $: JQuery;
-    
-    constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
-    {
-        this.$ = templateHolder.cloneTemplate('Button');
-        if (parentNode) { parentNode.append(this.$); }
-        let s = new Jul8.Scanner(this.$, true);
-        this.j8fields = s.fields;
-    }
-    
-    private j8fields: Jul8.Fields;
-    set(data: ButtonDesc): void
-    {
-        data.caption;
         this.j8fields.set(data);
     }
 }
