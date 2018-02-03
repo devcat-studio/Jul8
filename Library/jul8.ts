@@ -1,6 +1,4 @@
-﻿/// <reference path="jquery.d.ts" />
-
-namespace Jul8 {
+﻿namespace Jul8 {
     export interface View {
         $: JQuery;
     }
