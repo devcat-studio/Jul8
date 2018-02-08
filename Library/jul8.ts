@@ -101,21 +101,9 @@
         fields: Fields;
 
         constructor(root: JQuery, scanFields: boolean) {
-            // 리스트 항목은 부모로부터 뗀다.
-            // 그래야 처음에는 없고, 추가하는 만큼 붙일 수 있으니까.
-            root.find('[j8-listItem]').each(
-                (i, v) => {
-                    let itemId = v.getAttribute('j8-listItem');
-
-                    if (this.lists[itemId]) {
-                        console.error('(Jul8) duplicate listItem id: [' + itemId + ']')
-                    }
-
-                    let j = $(v);
-                    let p = j.parent();
-                    j.detach();
-                    this.lists[itemId] = { list: p, itemTemplate: j };
-                });
+            // 먼저 리스트 항목을 찾아서 부모로부터 뗀다.
+            // 그래야 처음에는 없고, 추가하는 만큼 클론해서 붙일 수 있으니까.
+            this.scanListItem(root.get(0));
 
             // 템플릿과 다르게 컨트롤들은 부모로부터 떼지 않는다.
             // 이미 템플릿 단위로 복제 생성된 상태이기 때문.
@@ -132,6 +120,27 @@
             if (scanFields) {
                 this.fields = new Fields();
                 this.visitElem(root.get(0));
+            }
+        }
+
+        private scanListItem(baseElem: Element) {
+            for (let i = 0; i < baseElem.children.length; ++i) {
+                let elem = baseElem.children[i];
+
+                if (elem.hasAttribute('j8-listItem')) {
+                    let itemId = elem.getAttribute('j8-listItem');
+                    if (this.lists[itemId]) {
+                        console.error('(Jul8) duplicate listItem id: [' + itemId + ']')
+                    }
+
+                    let j = $(elem);
+                    let p = j.parent();
+                    j.detach();
+                    this.lists[itemId] = { list: p, itemTemplate: j };
+                }
+                else {
+                    this.scanListItem(elem);
+                }
             }
         }
 

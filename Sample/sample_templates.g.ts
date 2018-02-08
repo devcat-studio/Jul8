@@ -44,6 +44,7 @@ class MyTable_TR_d implements Jul8.View
     inNum: JQuery;
     btnReflect: JQuery;
     btnRemove: JQuery;
+    listOf_Tag: Jul8.ViewList<MyTable_TR_Tag_d>;
     
     constructor($: JQuery)
     {
@@ -54,6 +55,7 @@ class MyTable_TR_d implements Jul8.View
         this.inNum = s.C('inNum');
         this.btnReflect = s.C('btnReflect');
         this.btnRemove = s.C('btnRemove');
+        this.listOf_Tag = s.L<MyTable_TR_Tag_d>('Tag');
     }
     
     private j8fields: Jul8.Fields;
@@ -62,5 +64,16 @@ class MyTable_TR_d implements Jul8.View
         data.num;
         data.inNum;
         this.j8fields.set(data);
+    }
+}
+
+class MyTable_TR_Tag_d implements Jul8.View
+{
+    $: JQuery;
+    
+    constructor($: JQuery)
+    {
+        this.$ = $;
+        let s = new Jul8.Scanner(this.$, false);
     }
 }

@@ -72,19 +72,10 @@ namespace Jul8Compiler
             template.ClassName = namePrefix + template.TemplateId;
             template.ModelName = templateNode.Attributes["j8-model"]?.Value;
 
-            var childNodes = templateNode.SelectNodes(".//*");
-            if (childNodes != null)
-            {
-                var listItemNodes = childNodes.Where(x => x.GetAttributeValue("j8-listItem", null) != null);
-                foreach (var node in listItemNodes)
-                {
-                    node.Remove(); // 지금 떼어놔야 바로 다음에 컨트롤 검색에서 빠진다.
-                    template.ListItems.Add(ParseTemplate(node, template.ClassName + "_"));
-                }
-            }
+            ScanListItems(template, templateNode);
 
             // j8-listItem 붙은 것들을 뗀 상태에서 다시 검색한다
-            childNodes = templateNode.SelectNodes(".//*");
+            var childNodes = templateNode.SelectNodes(".//*");
             if (childNodes != null)
             {
                 var controlNodes = childNodes.Where(x => x.GetAttributeValue("j8-control", null) != null);
@@ -103,6 +94,25 @@ namespace Jul8Compiler
             CheckNode(template, templateNode);
 
             return template;
+        }
+
+        static void ScanListItems(Template template, HtmlNode baseNode)
+        {
+            if (!baseNode.HasChildNodes) { return; }
+
+            // 순회 중 컨테이너 변경이 일어나기 때문에 ToArray로 한번 복사해서 순회
+            foreach (var node in baseNode.ChildNodes.ToArray())
+            {
+                if (node.Attributes.Contains("j8-listItem"))
+                {
+                    node.Remove(); // 지금 떼어놔야 바로 다음에 컨트롤 검색에서 빠진다.
+                    template.ListItems.Add(ParseTemplate(node, template.ClassName + "_"));
+                }
+                else
+                {
+                    ScanListItems(template, node);
+                }
+            }
         }
 
         static void CheckNode(Template template, HtmlNode node)

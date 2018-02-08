@@ -38,6 +38,10 @@ class MyTable extends MyTable_d {
             let v = tr.inNum.val();
             tr.set({ num: v, inNum: v });
         });
+
+        tr.listOf_Tag.add(MyTable_TR_Tag_d).$.text('Tag1');
+        tr.listOf_Tag.add(MyTable_TR_Tag_d).$.text('Tag2');
+        tr.listOf_Tag.add(MyTable_TR_Tag_d).$.text('Tag3');
     }
 
     summarize(): string {

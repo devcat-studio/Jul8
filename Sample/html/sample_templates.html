@@ -38,6 +38,7 @@
                     <th>번호</th>
                     <th>내용</th>
                     <th>INPUT</th>
+                    <th>네스팅된 리스트</th>
                     <th>동작</th>
                 </tr>
             </thead>
@@ -51,6 +52,9 @@
                     </td>
                     <td>
                         <input j8-control="inNum" type="text" value="{{ inNum }}" />
+                    </td>
+                    <td>
+                        <span j8-listItem="Tag" class="label label-default" style="margin-right:2pt"></span>
                     </td>
                     <td>
                         <button j8-control="btnReflect" class="btn btn-default btn-xs">입력 반영</button>
