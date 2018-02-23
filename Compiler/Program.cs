@@ -18,18 +18,26 @@ namespace Jul8Compiler
                 Environment.Exit(1);
             }
 
-            var configContent = File.ReadAllText(args[0]);
-            var config = JsonConvert.DeserializeObject<ConfigRoot>(configContent);
-
-            var dir = Path.GetDirectoryName(args[0]);
-
-            foreach (var item in config.build)
+            try
             {
-                var sourcePath = Path.Combine(dir, item.source);
-                var targetPath = Path.Combine(dir, item.target);
+                var configContent = File.ReadAllText(args[0]);
+                var config = JsonConvert.DeserializeObject<ConfigRoot>(configContent);
 
-                var templates = ParseHtml(sourcePath);
-                GenerateTypeScript(config, templates, targetPath);
+                var dir = Path.GetDirectoryName(args[0]);
+
+                foreach (var item in config.build)
+                {
+                    var sourcePath = Path.Combine(dir, item.source);
+                    var targetPath = Path.Combine(dir, item.target);
+
+                    var templates = ParseHtml(sourcePath);
+                    GenerateTypeScript(config, templates, targetPath);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                Environment.Exit(1);
             }
         }
 
