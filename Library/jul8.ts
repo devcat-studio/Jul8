@@ -60,20 +60,38 @@
     let pattern = /({{[^}]+}})/g;
 
     export class Fields {
-        attrs: { attr: Attr, origValue: string }[] = [];
-        elems: { elem: Node, origText: string }[] = [];
+        // elem과 replacedLocalName은 j8-attr-* 속성을 지원하는 용도이다.
+        // 이들이 설정되어 있으면 아직 DOM에는 해당 attr이 설정되어 있지 않은 것이다.
+        // 일단 attr이 설정된 뒤에는 그 Attr 노드를 직접 고치면 되므로 elem/replacedLocalName은 null이 된다.
+        attrs: { attr: Attr, elem: Element, replacedLocalName: string, origValue: string }[] = [];
+        nodes: { node: Node, origText: string }[] = [];
 
         set(data: any): void {
             for (let a of this.attrs) {
-                var newValue = this.replace(a.origValue, data);
-                if (a.attr.value !== newValue) {
-                    a.attr.value = newValue;
+                let newValue = this.replace(a.origValue, data);
+                if (a.replacedLocalName) {
+                    if (a.attr.namespaceURI !== null) {
+                        a.attr = document.createAttributeNS(a.attr.namespaceURI, a.replacedLocalName);
+                        a.attr.value = newValue;
+                        a.elem.setAttributeNodeNS(a.attr);
+                    } else {
+                        a.attr = document.createAttribute(a.replacedLocalName);
+                        a.attr.value = newValue;
+                        a.elem.setAttributeNode(a.attr);
+                    }
+                    a.elem = null;
+                    a.replacedLocalName = null;
+                } else {
+                    if (a.attr.value !== newValue) {
+                        a.attr.value = newValue;
+                    }
                 }
             }
-            for (let e of this.elems) {
+
+            for (let e of this.nodes) {
                 var newText = this.replace(e.origText, data);
-                if (e.elem.textContent !== newText) {
-                    e.elem.textContent = newText;
+                if (e.node.textContent !== newText) {
+                    e.node.textContent = newText;
                 }
             }
         }
@@ -110,6 +128,7 @@
             root.find('[j8-control]').each(
                 (i, v) => {
                     let cid = v.getAttribute('j8-control');
+                    v.removeAttribute('j8-control');
 
                     if (this.controls[cid]) {
                         console.error('(Jul8) duplicate control id: [' + cid + ']')
@@ -119,7 +138,7 @@
 
             if (scanFields) {
                 this.fields = new Fields();
-                this.visitElem(root.get(0));
+                this.visitNode(root.get(0));
             }
         }
 
@@ -130,6 +149,8 @@
 
                 if (elem.hasAttribute('j8-listItem')) {
                     let itemId = elem.getAttribute('j8-listItem');
+                    elem.removeAttribute('j8-listItem');
+                    elem.removeAttribute('j8-model');
                     if (this.lists[itemId]) {
                         console.error('(Jul8) duplicate listItem id: [' + itemId + ']')
                     }
@@ -145,29 +166,59 @@
             }
         }
 
-        private visitElem(elem: Node) {
-            let childNodes = elem.childNodes;
+        private visitNode(node: Node) {
+            let childNodes = node.childNodes;
             if (childNodes.length > 0) {
                 for (let i = 0; i < childNodes.length; ++i) {
-                    this.visitElem(childNodes[i])
+                    this.visitNode(childNodes[i])
                 }
             }
             else {
-                if (elem.textContent.search(pattern) >= 0) {
-                    let e = { elem: elem, origText: elem.textContent };
-                    this.fields.elems.push(e);
+                if (node.textContent.search(pattern) >= 0) {
+                    let n = { node: node, origText: node.textContent };
+                    this.fields.nodes.push(n);
                 }
             }
 
-            if (elem.attributes) {
+            if (node.attributes) {
+                let elem = node as Element;
+                let replacedAttrs: { name: string, attr: Attr }[] = [];
+                let removedAttrs: Attr[] = [];
+
                 for (let i = 0; i < elem.attributes.length; ++i) {
                     let attr = elem.attributes[i];
-                    if (attr.value.search(pattern) >= 0) {
-                        if (attr.name === 'style') { console.error("(Jul8) can't use {{ ... }} notation in `style` attribute."); }
-                        if (attr.name === 'class') { console.error("(Jul8) can't use {{ ... }} notation in `class` attribute."); }
-                        let a = { attr: attr, origValue: attr.value };
-                        this.fields.attrs.push(a);
+                    let replacedLocalName = null;
+                    if (attr.localName.substring(0, 8) === 'j8-attr-') {
+                        replacedLocalName = attr.localName.substring(8);
                     }
+                    if (attr.value.search(pattern) >= 0) {
+                        let localName = replacedLocalName || attr.localName;
+                        if (localName === 'style') { console.error("(Jul8) can't use {{ ... }} notation in `style` attribute."); }
+                        if (localName === 'class') { console.error("(Jul8) can't use {{ ... }} notation in `class` attribute."); }
+                        let a = { elem: elem, attr: attr, replacedLocalName: replacedLocalName, origValue: attr.value };
+                        this.fields.attrs.push(a);
+                        if (replacedLocalName) {
+                            // j8-attr-* 속성은 DOM에는 남아 있지 않고 나중에 재구성한다.
+                            removedAttrs.push(attr);
+                        }
+                    } else if (replacedLocalName) {
+                        // j8-attr-XXX="YYY" 속성에 {{}}가 아예 안 들어 있을 수도 있다.
+                        // 이 경우에도 XXX="YYY"로 일괄 처리는 해야 한다.
+                        replacedAttrs.push({ name: replacedLocalName, attr: attr });
+                    }
+                }
+
+                for (let { name, attr } of replacedAttrs) {
+                    elem.removeAttributeNode(attr);
+                    if (attr.namespaceURI !== null) {
+                        elem.setAttributeNS(attr.namespaceURI, name, attr.value);
+                    } else {
+                        elem.setAttribute(name, attr.value);
+                    }
+                }
+
+                for (let attr of removedAttrs) {
+                    elem.removeAttributeNode(attr);
                 }
             }
         }
@@ -210,6 +261,7 @@
                     let j = $(v);
                     j.detach();
                     let tid = v.getAttribute('j8-template');
+                    v.removeAttribute('j8-template');
                     this.templates[tid] = j;
                 });
         }
