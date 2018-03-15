@@ -61,7 +61,7 @@
 
     export class Fields {
         attrs: { attr: Attr, origValue: string }[] = [];
-        elems: { elem: Element, origText: string }[] = [];
+        elems: { elem: Node, origText: string }[] = [];
 
         set(data: any): void {
             for (let a of this.attrs) {
@@ -82,7 +82,7 @@
             let list = text.split(pattern);
             for (let i = 0; i < list.length; ++i) {
                 let word = list[i]
-                if (word.startsWith("{{") && word.endsWith("}}")) {
+                if (word.substring(0, 2) === "{{" && word.substring(word.length - 2) === "}}") {
                     let fname = word.substr(2, word.length - 4).trim();
                     if (data[fname] !== undefined) {
                         list[i] = data[fname];
@@ -124,8 +124,9 @@
         }
 
         private scanListItem(baseElem: Element) {
-            for (let i = 0; i < baseElem.children.length; ++i) {
-                let elem = baseElem.children[i];
+            for (let i = 0; i < baseElem.childNodes.length; ++i) {
+                let elem = baseElem.childNodes[i] as Element;
+                if (elem.nodeType !== elem.ELEMENT_NODE) continue;
 
                 if (elem.hasAttribute('j8-listItem')) {
                     let itemId = elem.getAttribute('j8-listItem');
@@ -144,8 +145,8 @@
             }
         }
 
-        private visitElem(elem: Element) {
-            let childNodes = elem.children;
+        private visitElem(elem: Node) {
+            let childNodes = elem.childNodes;
             if (childNodes.length > 0) {
                 for (let i = 0; i < childNodes.length; ++i) {
                     this.visitElem(childNodes[i])
@@ -158,13 +159,15 @@
                 }
             }
 
-            for (let i = 0; i < elem.attributes.length; ++i) {
-                let attr = elem.attributes[i];
-                if (attr.value.search(pattern) >= 0) {
-                    if (attr.name === 'style') { console.error("(Jul8) can't use {{ ... }} notation in `style` attribute."); }
-                    if (attr.name === 'class') { console.error("(Jul8) can't use {{ ... }} notation in `class` attribute."); }
-                    let a = { attr: attr, origValue: attr.value };
-                    this.fields.attrs.push(a);
+            if (elem.attributes) {
+                for (let i = 0; i < elem.attributes.length; ++i) {
+                    let attr = elem.attributes[i];
+                    if (attr.value.search(pattern) >= 0) {
+                        if (attr.name === 'style') { console.error("(Jul8) can't use {{ ... }} notation in `style` attribute."); }
+                        if (attr.name === 'class') { console.error("(Jul8) can't use {{ ... }} notation in `class` attribute."); }
+                        let a = { attr: attr, origValue: attr.value };
+                        this.fields.attrs.push(a);
+                    }
                 }
             }
         }
