@@ -180,8 +180,8 @@
                 }
             }
 
-            if (node.attributes) {
-                let elem = node as Element;
+            let elem = node as Element;
+            if (elem.attributes) {
                 let replacedAttrs: { name: string, attr: Attr }[] = [];
                 let removedAttrs: Attr[] = [];
 
