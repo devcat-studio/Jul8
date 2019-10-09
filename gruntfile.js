@@ -3,11 +3,6 @@ module.exports = function (grunt) {
     // 우리가 지은 이름에는 언더바(_)를 붙임
 
     grunt.initConfig({
-        // https://github.com/sindresorhus/grunt-concurrent
-        concurrent: {
-            target1_: ['watch:Sample_Templates_']
-        },
-
         // https://github.com/gruntjs/grunt-contrib-watch
         watch: {
             Sample_Templates_: {
@@ -26,7 +21,6 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-exec');
-    grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask('default', ['watch']);
