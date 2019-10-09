@@ -1,7 +1,6 @@
 {
   "header": [
     "/// <reference path='../Library/jul8.ts' />",
-    "/// <reference path='../Library/jquery.d.ts' />",
     ""
   ],
   "footer": [

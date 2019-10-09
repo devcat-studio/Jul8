@@ -1,5 +1,4 @@
 ﻿/// <reference path='../Library/jul8.ts' />
-/// <reference path='../Library/jquery.d.ts' />
 
 class Buttons_d implements Jul8.View
 {

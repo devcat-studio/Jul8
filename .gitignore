@@ -2,6 +2,7 @@
 */obj/
 .vs
 packages
+node_modules
 *.csproj.user
 all.js
 all.js.map
