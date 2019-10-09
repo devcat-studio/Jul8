@@ -35,7 +35,7 @@ class MyTable extends MyTable_d {
         tr.btnRemove.click(() => this.listOf_TR.remove(tr));
 
         tr.btnReflect.click(() => {
-            let v = tr.inNum.val();
+            let v = parseInt(tr.inNum.val().toString());
             tr.set({ num: v, inNum: v });
         });
 
@@ -79,7 +79,7 @@ $(document).ready(
         });
 
         buttons.removeAt.click(() => {
-            let idx = parseInt(buttons.removeIdx.val());
+            let idx = parseInt(buttons.removeIdx.val().toString());
             myTable.listOf_TR.removeAt(idx);
             buttons.summary.text(myTable.summarize());
         });
