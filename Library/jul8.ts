@@ -144,7 +144,7 @@
 
         private scanListItem(baseElem: Element) {
             for (let i = 0; i < baseElem.childNodes.length; ++i) {
-                let elem = baseElem.childNodes[i] as Element;
+                let elem = baseElem.childNodes[i] as HTMLElement;
                 if (elem.nodeType !== elem.ELEMENT_NODE) continue;
 
                 if (elem.hasAttribute('j8-listItem')) {
