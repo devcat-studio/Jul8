@@ -159,7 +159,7 @@ namespace Jul8Compiler
 
             foreach (var template in templates)
             {
-                GenerateClass(sb, template, true);
+                GenerateClass(sb, template, null);
             }
 
             foreach (var ln in config.footer)
@@ -169,13 +169,18 @@ namespace Jul8Compiler
             sb.WriteToFile(path);
         }
 
-        static void GenerateClass(CodeBuilder sb, Template template, bool isRoot)
+        static void GenerateClass(CodeBuilder sb, Template template, string optionalParentClassName)
         {
             bool useModel = (template.Fields.Count > 0 || template.ModelName != null);
 
             sb.AppendFormat("class {0}_d implements Jul8.View", template.ClassName);
             using (sb.Indent("{", "}"))
             {
+                if (optionalParentClassName != null)
+                {
+                    sb.AppendFormat("_parent: {0}_d;", optionalParentClassName);
+                }
+
                 sb.AppendLine("$: JQuery;");
                 foreach (var controlId in template.Controls)
                 {
@@ -188,24 +193,32 @@ namespace Jul8Compiler
                 sb.AppendLine();
 
                 // 생성자
-                if (isRoot)
+                if (optionalParentClassName == null)
                 {
                     sb.AppendLine("constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)");
                 }
                 else
                 {
-                    sb.AppendLine("constructor($: JQuery)");
+                    if (useModel)
+                    {
+                        sb.AppendFormat("constructor(data: {0}, parent: {1}_d)", template.ModelName, optionalParentClassName);
+                    }
+                    else
+                    {
+                        sb.AppendFormat("constructor(parent: {1}_d)", optionalParentClassName);
+                    }
                 }
                 using (sb.Indent("{", "}"))
                 {
-                    if (isRoot)
+                    if (optionalParentClassName == null)
                     {
                         sb.AppendFormat("this.$ = templateHolder.cloneTemplate('{0}');", template.TemplateId);
                         sb.AppendLine("if (parentNode) { parentNode.append(this.$); }");
                     }
                     else
                     {
-                        sb.AppendLine("this.$ = $;");
+                        sb.AppendLine("this._parent = parent;");
+                        sb.AppendFormat("this.$ = parent.listOf_{0}._cloneTemplate();", template.TemplateId);
                     }
                     sb.AppendFormat("let s = new Jul8.Scanner(this.$, {0});", (useModel ? "true" : "false"));
                     if (useModel)
@@ -222,9 +235,14 @@ namespace Jul8Compiler
                     {
                         sb.AppendFormat("this.listOf_{0} = s.L<{1}_d>('{0}');", listItem.TemplateId, listItem.ClassName);
                     }
+
+                    if (useModel)
+                    {
+                        sb.AppendLine("this.set(data);");
+                    }
                 }
 
-                if (template.Fields.Count > 0 || template.ModelName != null)
+                if (useModel)
                 {
                     sb.AppendLine("");
                     sb.AppendLine("private j8fields: Jul8.Fields;");
@@ -246,7 +264,7 @@ namespace Jul8Compiler
 
             foreach (var item in template.ListItems)
             {
-                GenerateClass(sb, item, false);
+                GenerateClass(sb, item, template.ClassName);
             }
         }
     }

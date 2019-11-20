@@ -16,19 +16,22 @@ class TodoListView_d implements Jul8.View
 
 class TodoListView_TodoItemControl_d implements Jul8.View
 {
+    _parent: TodoListView_d;
     $: JQuery;
     completed: JQuery;
     text: JQuery;
     input: JQuery;
     
-    constructor($: JQuery)
+    constructor(data: TodoItem, parent: TodoListView_d)
     {
-        this.$ = $;
+        this._parent = parent;
+        this.$ = parent.listOf_TodoItemControl._cloneTemplate();
         let s = new Jul8.Scanner(this.$, true);
         this.j8fields = s.fields;
         this.completed = s.C('completed');
         this.text = s.C('text');
         this.input = s.C('input');
+        this.set(data);
     }
     
     private j8fields: Jul8.Fields;

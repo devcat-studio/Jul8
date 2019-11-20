@@ -15,7 +15,7 @@ class TodoListView extends TodoListView_d {
 
         // 외부에서 주어진 초기 데이터로 리스트를 채움
         for (var item of items) {
-            var control = new TodoItemControl(this, item);
+            var control = new TodoItemControl(item, this);
             list.add(control);
         }
 
@@ -23,7 +23,7 @@ class TodoListView extends TodoListView_d {
         // 컨트롤 클래스도 다른 것을 사용함.
         var lastOne = new LastTodoItemControl(this);
         lastOne.text.click(() => {
-            var newControl = new TodoItemControl(this, item);
+            var newControl = new TodoItemControl(item, this);
             list.insert(newControl, list.length() - 1);
             newControl.set({ completed: false, text: "" });
             newControl.setEditingMode(true);
@@ -35,9 +35,8 @@ class TodoListView extends TodoListView_d {
 class TodoItemControl extends TodoListView_TodoItemControl_d {
     private data: TodoItem;
 
-    constructor(parent: TodoListView, data: TodoItem) {
-        super(parent.listOf_TodoItemControl._cloneTemplate());
-        this.set(data);
+    constructor(data: TodoItem, parent: TodoListView) {
+        super(data, parent);
         this.setEditingMode(false);
      
         // 이벤트 핸들링: 클릭하면 편집을 시작한다
@@ -73,8 +72,8 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
 
 class LastTodoItemControl extends TodoListView_TodoItemControl_d {
     constructor(parent: TodoListView) {
-        super(parent.listOf_TodoItemControl._cloneTemplate());
-
+        super({ completed: false, text: "" }, parent);
+        
         this.completed.hide();
         this.input.hide();
         this.text.text('새 항목 추가');
