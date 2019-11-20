@@ -18,7 +18,8 @@
     "inlineSources": true
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "../Library/*.ts"
   ],
   "exclude": [
   ]
