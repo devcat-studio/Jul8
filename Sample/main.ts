@@ -1,63 +1,79 @@
 ﻿/// <reference path='sample_templates.g.ts' />
 
-type SampleData = {
-    num: number;
-    inNum: number;
-};
-
-type ButtonDesc = {
-    caption: string;
+type TodoItem = {
+    completed: boolean;
+    text: string;
 }
 
-//-------------------------------------------------------
-// 상속해서 만든 예제.
-// 꼭 상속해서 만들어야만 하는 것은 아니다.
-class MyTable extends MyTable_d {
-    count: number = 0;
-
+class TodoListView extends TodoListView_d {
     constructor(parent: JQuery) {
         super(g_jul8, parent);
     }
 
-    addNewItem(): void {
-        // 이 예제에서는 굳이 상속을 사용하지 않음.
-        // 리스트 아이템에서 상속을 사용하고 싶다면 아래와 같이 하면 된다.
-        //var tr = <MyTable_TR>this.listOf_TR.add(MyTable_TR);
+    setItems(items: TodoItem[]): void {
+        // 외부에서 주어진 초기 데이터로 리스트를 채움
+        for (var item of items) {
+            var control = this.listOf_TodoItemControl.add(TodoItemControl);
+            control.set(item);
+        }
 
-        var tr = this.listOf_TR.add(MyTable_TR_d);
-        let n = ++this.count;
+        // 마지막 항목은 '새 항목 추가' 이다.
+        // 컨트롤 클래스도 다른 것을 사용함.
+        var lastOne = this.listOf_TodoItemControl.add(LastTodoItemControl);
+        lastOne.text.click(() => {
+            var pos = this.listOf_TodoItemControl.length() - 1;
+            var newControl = this.listOf_TodoItemControl.insert(TodoItemControl, pos);
+            newControl.set({ completed: false, text: "" });
+            newControl.setEditingMode(true);
+        });
+    }
+}
 
-        // 덮어씌우기가 제대로 되는지 확인하기 위해 한 번 쓰레기값을 넣는다
-        tr.set({ num: 0, inNum: 0 });
+class TodoItemControl extends TodoListView_TodoItemControl_d {
+    private data: TodoItem;
 
-        tr.set({ num: n, inNum: n });
-
-        tr.btnRemove.click(() => this.listOf_TR.remove(tr));
-
-        tr.btnReflect.click(() => {
-            let v = Number(tr.inNum.val());
-            tr.set({ num: v, inNum: v });
+    constructor(parent: JQuery) {
+        super(parent);
+        this.setEditingMode(false);
+     
+        // 이벤트 핸들링: 클릭하면 편집을 시작한다
+        this.text.click(() => {
+            this.setEditingMode(true);
         });
 
-        tr.listOf_Tag.add(MyTable_TR_Tag_d).$.text('Tag1');
-        tr.listOf_Tag.add(MyTable_TR_Tag_d).$.text('Tag2');
-        tr.listOf_Tag.add(MyTable_TR_Tag_d).$.text('Tag3');
+        // 이벤트 핸들링: 포커스 빠지면 편집을 마친다
+        this.input.blur(() => {
+            this.setEditingMode(false);
+            this.data.text = String(this.input.val());
+            this.set(this.data);
+        });
     }
 
-    summarize(): string {
-        let rv = this.listOf_TR.length + '개의 항목이 있습니다.';
+    set(data: TodoItem): void {
+        super.set(data);
+        this.data = data;
+    }
 
-        rv += 'forEach로 순회: [ ';
-        this.listOf_TR.forEach((v, i) => {
-            rv += v.num.text() + ' ';
-        });
-        rv += '] getAt으로 순회: [ ';
-        for (let i = 0; i < this.listOf_TR.length; ++i) {
-            rv += this.listOf_TR.getAt(i).num.text() + ' ';
+    setEditingMode(on: boolean): void {
+        if (on) {
+            this.text.hide();
+            this.input.show();
+            this.input.focus();
         }
-        rv += ']';
+        else {
+            this.text.show();
+            this.input.hide();
+        }
+    }
+}
 
-        return rv;
+class LastTodoItemControl extends TodoListView_TodoItemControl_d {
+    constructor(parent: JQuery) {
+        super(parent);
+
+        this.completed.hide();
+        this.input.hide();
+        this.text.text('새 항목 추가');
     }
 }
 
@@ -68,31 +84,13 @@ $(document).ready(
     () => {
         g_jul8 = new Jul8.TemplateHolder();
         g_jul8.addTemplateRoot($('#TEMPLATE_HOLDER_ROOT'));
-
         let parent = $('#PANEL_BODY');
 
-        let buttons = new Buttons_d(g_jul8, parent);
+        let todoListView = new TodoListView(parent);
 
-        buttons.add.click(() => {
-            myTable.addNewItem();
-            buttons.summary.text(myTable.summarize());
-        });
-
-        buttons.removeAt.click(() => {
-            let idx = Number(buttons.removeIdx.val());
-            myTable.listOf_TR.removeAt(idx);
-            buttons.summary.text(myTable.summarize());
-        });
-
-        buttons.empty.click(() => {
-            myTable.listOf_TR.empty();
-            buttons.summary.text(myTable.summarize());
-        });
-
-        let myTable = new MyTable(parent);
-        myTable.addNewItem();
-        myTable.addNewItem();
-        myTable.addNewItem();
-        myTable.addNewItem();
-        buttons.summary.text(myTable.summarize());
+        var testItems: TodoItem[] = [
+            { completed: false, text: '처음부터 있는 첫번째 항목' },
+            { completed: true, text: '처음부터 있는 두번째 항목' }
+        ];
+        todoListView.setItems(testItems);
     });

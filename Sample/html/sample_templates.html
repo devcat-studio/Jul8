@@ -11,7 +11,7 @@
     <script class="javascript" src="all.js"></script>
 </head>
 <body style='background: #fff; padding: 10pt;'>
-
+    <h3>To Do List</h3>
 	<div class="panel panel-default">
 		<div class="panel-body" id="PANEL_BODY">
 		</div>
@@ -20,52 +20,16 @@
     <div id='TEMPLATE_HOLDER_ROOT' style='display:none;'>
         <!-- ########################################################################### -->
         $(TemplateBegin)
-        <div j8-template="Buttons">
-            <button j8-control="add" class="btn btn-info">새 항목 추가</button>
-            <br>
-            <input j8-control="removeIdx" type="text" value="0" style="width: 30pt" />
-            <button j8-control="removeAt" class="btn btn-info">번째 지우기</button>
-            <br>
-            <button j8-control="empty" class="btn btn-info">모두 지우기</button>
-            <div j8-control="summary">
-
+        <div j8-template="TodoListView" style='width:400px'>
+            <div j8-listItem="TodoItemControl" j8-model="TodoItem" style='padding:5px; border: 1px solid #ccc'>
+                <input j8-control="completed" type="checkbox">
+                <div j8-control="text" style='display:inline-block; width:95%; background:#eee; margin:0;'>{{ text }}</div>
+                <input j8-control="input" type="text" value="{{ text }}" style='width:95%; margin:0;'>
             </div>
         </div>
-        <br />
-        <table j8-template="MyTable" class="table table-hover">
-            <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>내용</th>
-                    <th>INPUT</th>
-                    <th>네스팅된 리스트</th>
-                    <th>동작</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr j8-listItem="TR" style="cursor: pointer" j8-model="SampleData">
-                    <td j8-control="num">
-                        {{ num }}
-                    </td>
-                    <td>
-                        템플릿 스타일로 설정하는 {{ num }}번째 행 (두번째 등장한 숫자 {{ num}})
-                    </td>
-                    <td>
-                        <input j8-control="inNum" type="text" value="{{ inNum }}" />
-                    </td>
-                    <td>
-                        <span j8-listItem="Tag" class="label label-default" style="margin-right:2pt"></span>
-                    </td>
-                    <td>
-                        <button j8-control="btnReflect" class="btn btn-default btn-xs">입력 반영</button>
-                        <button j8-control="btnRemove" class="btn btn-default btn-xs">지우기</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
         $(TemplateEnd)
         <!-- ########################################################################### -->
+
     </div>
 </body>
 </html>
