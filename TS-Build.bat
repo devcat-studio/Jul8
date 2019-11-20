@@ -1,1 +1,0 @@
-npx tsc -b Sample --force
