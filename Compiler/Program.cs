@@ -238,7 +238,7 @@ namespace Jul8Compiler
 
                     if (useModel)
                     {
-                        sb.AppendLine("this.set(data);");
+                        sb.AppendLine("if (data) { this.set(data); }");
                     }
                 }
 

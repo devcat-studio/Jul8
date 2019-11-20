@@ -31,7 +31,7 @@ class TodoListView_TodoItemControl_d implements Jul8.View
         this.completed = s.C('completed');
         this.text = s.C('text');
         this.input = s.C('input');
-        this.set(data);
+        if (data) { this.set(data); }
     }
     
     private j8fields: Jul8.Fields;
