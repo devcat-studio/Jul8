@@ -13,21 +13,19 @@
             this.tmpl = tmpl;
         }
 
-        add<U extends T>(type: { new(t: JQuery): U }): U {
-            return this.insert(type, this.list.length);
+        add<U extends T>(child: U): void {
+            this.list.push(child);
+            this.root.append(child.$);
         }
 
-        insert<U extends T>(type: { new(t: JQuery): U }, index: number): U {
-            let newNode = this.tmpl.clone();
-            let child = new type(newNode);
+        insert<U extends T>(child: U, index: number): void {
             this.list.splice(index, 0, child);
             if (index == 0) {
-                this.root.prepend(newNode);
+                this.root.prepend(child.$);
             }
             else {
-                this.list[index - 1].$.after(newNode);
+                this.list[index - 1].$.after(child.$);
             }
-            return child;
         }
 
         length(): number {
@@ -62,6 +60,10 @@
 
         forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void {
             this.list.forEach(callbackfn, thisArg);
+        }
+
+        _cloneTemplate(): JQuery {
+            return this.tmpl.clone();
         }
     }
 
