@@ -7,27 +7,37 @@
         private root: JQuery;
         private tmpl: JQuery;
         private list: T[] = [];
-        length: number;
 
         constructor($: JQuery, tmpl: JQuery) {
             this.root = $;
             this.tmpl = tmpl;
         }
 
-        add(type: { new(t: JQuery): T }): T {
+        add<U extends T>(type: { new(t: JQuery): U }): U {
+            return this.insert(type, this.list.length);
+        }
+
+        insert<U extends T>(type: { new(t: JQuery): U }, index: number): U {
             let newNode = this.tmpl.clone();
             let child = new type(newNode);
-            this.list.push(child);
-            this.length = this.list.length;
-            this.root.append(newNode);
+            this.list.splice(index, 0, child);
+            if (index == 0) {
+                this.root.prepend(newNode);
+            }
+            else {
+                this.list[index - 1].$.after(newNode);
+            }
             return child;
+        }
+
+        length(): number {
+            return this.list.length;
         }
 
         remove(child: T): void {
             let idx = this.list.indexOf(child);
             if(idx >= 0) {
                 this.list.splice(idx, 1);
-                this.length = this.list.length;
                 child.$.remove();
             }
         }
@@ -38,13 +48,11 @@
             }
             let child = this.list[idx];
             this.list.splice(idx, 1);
-            this.length = this.list.length;
             child.$.remove();
         }
 
         empty(): void {
             this.list = [];
-            this.length = 0;
             this.root.empty();
         }
 
