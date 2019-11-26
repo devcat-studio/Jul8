@@ -6,12 +6,109 @@
 
     <title>Jul8 test</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"-->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script class="javascript" src="all.js"></script>
+
+    <style>
+        body {
+            max-width:600px;
+            margin:0 auto;
+            padding:10px;
+
+            background-color:rgb(231, 230, 225);
+        }
+        body,
+        textarea {
+            font-size:14px;
+        }
+        h1 {
+            margin:1em 0 .5em;
+            
+            color:tomato;
+            font-size:3em;
+            font-weight:200;
+            text-align:center;
+        }
+        .TodoListView {
+            overflow:hidden;
+
+            background-color:rgba(255, 255, 255, 0.6);
+            border-radius:16px;
+        }
+        .TodoListView > div {
+            position:relative;
+        }
+        .TodoListView > div + div:before {
+            display:block;
+            height:2px;
+            margin:-1px 1em;
+
+            background-color:rgba(233, 233, 233, 0.5);
+            content:'';
+        }
+        .TodoListView > div:last-child:before {
+            height:5px;
+            margin:0;
+
+            background-color:rgb(231, 230, 225);
+        }
+        .TodoListView input[type="checkbox"] {
+            position:absolute;
+
+            opacity:0;
+        }
+        .TodoListView input[type="checkbox"] + icon {
+            position:absolute;
+            top:1.6em;
+            left:1em;
+            width:20px;
+            height:20px;
+
+            background:rgba(223, 223, 223, 0.5) 50% 50% no-repeat;
+            border-radius:100%;
+            cursor:pointer;
+        }
+        .TodoListView input[type="checkbox"]:checked + icon {
+            background-image:url("data:image/svg+xml, %3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3e%3cpath fill='none' d='M0 0h24v24H0z'/%3e%3cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'/%3e%3c/svg%3e");
+            background-size:cover;
+        }
+        .TodoListView textarea.checked {
+            color:rgba(0,0,0,.4);
+            font-style:italic;
+            text-decoration:line-through;
+        }
+        .TodoListView textarea {
+            width:100%;
+            min-width:400px;
+            height:4.4em;
+            padding:1.5em 1em 1.5em 3em;
+
+            background-color:transparent;
+            border:0;
+            box-sizing:border-box;
+            color:#333;
+            font-size:1.05em;
+            line-height:1.4em;
+            resize:none;
+            vertical-align:top;
+        }
+        .TodoListView textarea:focus {
+            font-weight:700;
+            outline:0;
+        }
+        .TodoListView textarea:read-only:hover,
+        .TodoListView textarea:hover {
+            background-color:rgba(255,255,255,.5);
+        }
+        .TodoListView > div:last-child textarea {
+            background-color:rgba(185, 185, 185, 0.5);
+            color:#000;
+        }
+    </style>
 </head>
-<body style='background: #fff; padding: 10pt;'>
-    <h3>To Do List</h3>
+<body>
+    <h1>ToDo List</h1>
 	<div class="panel panel-default">
 		<div class="panel-body" id="PANEL_BODY">
 		</div>
@@ -20,11 +117,10 @@
     <div id='TEMPLATE_HOLDER_ROOT' style='display:none;'>
         <!-- ########################################################################### -->
         $(TemplateBegin)
-        <div j8-template="TodoListView" style='width:400px'>
-            <div j8-listItem="TodoItemControl" j8-model="TodoItem" style='padding:5px; border: 1px solid #ccc'>
-                <input j8-control="completed" type="checkbox">
-                <div j8-control="text" style='display:inline-block; width:95%; background:#eee; margin:0;'>{{ text }}</div>
-                <input j8-control="input" type="text" value="{{ text }}" style='width:95%; margin:0;'>
+        <div j8-template="TodoListView" class="TodoListView">
+            <div j8-listItem="TodoItemControl" j8-model="TodoItem">
+                <label><input j8-control="completed" type="checkbox" /><icon></icon></label>
+                <textarea cols="12" rows="4" j8-control="input">{{ text }}</textarea>
             </div>
         </div>
         $(TemplateEnd)
