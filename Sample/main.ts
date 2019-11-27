@@ -75,29 +75,29 @@ class TodoListView extends TodoListView_d {
         lastOne.input.attr('placeholder', '새 항목 추가');
 
         lastOne.input
-        .on("input", () => {
-            TodoItemControl.resizeInput(lastOne.input);
-        })
-        .keydown((event) => {
-            var code = event.keyCode || event.which;
-            if (code == 13) {
-                lastOne.input.trigger("blur");
-            }
-        })
-        .focusout(() => {
-            var newControl = new TodoItemControl(item, this);
+            .on("input", () => {
+                TodoItemControl.resizeInput(lastOne.input);
+            })
+            .keydown((event) => {
+                var code = event.keyCode || event.which;
+                if (code == 13) {
+                    lastOne.input.trigger("blur");
+                }
+            })
+            .focusout(() => {
+                var newControl = new TodoItemControl(item, this);
 
-            if (lastOne.input.val() != "") {
-                list.insert(newControl, list.length() - 1);
+                if (lastOne.input.val() != "") {
+                    list.insert(newControl, list.length() - 1);
 
-                var t = { completed: false, text: String(lastOne.input.val()) };
-                newControl.set(t);
-                lastOne.input.val("");
-                lastOne.input.removeAttr("style");
+                    var t = { completed: false, text: String(lastOne.input.val()) };
+                    newControl.set(t);
+                    lastOne.input.val("");
+                    lastOne.input.removeAttr("style");
 
-                this.writeStorage();
-            }
-        });
+                    this.writeStorage();
+                }
+            });
         list.add(lastOne);
     }
 }
@@ -111,27 +111,27 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
      
         // 이벤트 핸들링: 포커스되면 편집을 시작한다
         this.input
-        .focusin(() => {
-            this.makeInputEditable();
-        })
-        .on("input", () =>{
-            TodoItemControl.resizeInput(this.input);
-        })
-        .keydown((event) => {
-            var code = event.keyCode || event.which;
-            if (code == 13) {
-                this.input.trigger("focusout");
-            }
-        })
-        // 이벤트 핸들링: 포커스 빠지면 편집을 마친다
-        .focusout(() => {
-            this.endEditing();
-        });
+            .focusin(() => {
+                this.makeInputEditable();
+            })
+            .on("input", () =>{
+                TodoItemControl.resizeInput(this.input);
+            })
+            .keydown((event) => {
+                var code = event.keyCode || event.which;
+                if (code == 13) {
+                    this.input.trigger("focusout");
+                }
+            })
+            // 이벤트 핸들링: 포커스 빠지면 편집을 마친다
+            .focusout(() => {
+                this.endEditing();
+            });
 
-        // 이벤트 핸들링: 체크박스 값 확인
-        this.completed.change(() => {
-            this.endEditing();
-        });
+            // 이벤트 핸들링: 체크박스 값 확인
+            this.completed.change(() => {
+                this.endEditing();
+            });
     }
 
     set(data: TodoItem): void {
