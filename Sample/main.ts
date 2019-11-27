@@ -10,12 +10,6 @@ class TodoListView extends TodoListView_d {
         super(g_jul8, parent);
     }
 
-    //데이터가 너무 길어지면 textarea의 높이를 변경한다
-    resizeInput(element: JQuery) :void {
-        var h = element.prop("scrollHeight") - parseFloat(element.css("padding-top")) * 2;
-        element.height(h);
-    }
-
     // 로컬 스토리지에 저장할 데이터를 준비한다
     serialize(): TodoItem[] {
         var result: TodoItem[] = [];
@@ -70,7 +64,7 @@ class TodoListView extends TodoListView_d {
         for (var item of items) {
             var control = new TodoItemControl(item, this);
             list.add(control);
-            this.resizeInput(control.input);
+            TodoItemControl.resizeInput(control.input);
             if (item.completed) {
                 control.input.addClass("checked");
             }
@@ -86,7 +80,7 @@ class TodoListView extends TodoListView_d {
 
         lastOne.input
         .on("input", () => {
-            this.resizeInput(lastOne.input);
+            TodoItemControl.resizeInput(lastOne.input);
         })
         .keydown((event) => {
             var code = event.keyCode || event.which;
@@ -125,7 +119,7 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
             this.setEditingMode(true);
         })
         .on("input", () =>{
-            parent.resizeInput(this.input);
+            TodoItemControl.resizeInput(this.input);
         })
         .keydown((event) => {
             var code = event.keyCode || event.which;
@@ -157,7 +151,7 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
 
         this.completed.prop("checked", data.completed);
 
-        todoListView.resizeInput(this.input);
+        TodoItemControl.resizeInput(this.input);
     }
 
     get(): TodoItem {
@@ -188,6 +182,12 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
 
         control.set(control.data);
         todoListView.writeStorage();
+    }
+
+    //데이터가 너무 길어지면 textarea의 높이를 변경한다
+    static resizeInput(element: JQuery): void {
+        var h = element.prop("scrollHeight") - parseFloat(element.css("padding-top")) * 2;
+        element.height(h);
     }
 }
 
