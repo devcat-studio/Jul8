@@ -78,9 +78,11 @@ class TodoListView extends TodoListView_d {
 
 class TodoItemControl extends TodoListView_TodoItemControl_d {
     private data: TodoItem;
+    private parent: TodoListView;
 
     constructor(data: TodoItem, parent: TodoListView) {
         super(data, parent);
+        this.parent = parent;
         this.makeInputReadonly();
      
         // 이벤트 핸들링: 포커스되면 편집을 시작한다
@@ -140,7 +142,7 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
     }
 
     endEditing(): void {
-        var list = todoListView.listOf_TodoItemControl;
+        var list = this.parent.listOf_TodoItemControl;
 
         this.makeInputReadonly();
         this.applyCompletionToInput();
@@ -153,7 +155,7 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
         }
 
         this.set(this.data);
-        todoListView.writeStorage();
+        this.parent.writeStorage();
     }
 
     //데이터가 너무 길어지면 textarea의 높이를 변경한다
@@ -164,8 +166,11 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
 }
 
 class LastTodoItemControl extends TodoListView_TodoItemControl_d {
+    private parent: TodoListView;
+
     constructor(parent: TodoListView) {
         super({ completed: false, text: "" }, parent);
+        this.parent = parent;
         this.completed.remove();
         this.input.attr('placeholder', '새 항목 추가');
 
@@ -185,23 +190,22 @@ class LastTodoItemControl extends TodoListView_TodoItemControl_d {
 
                     this.input.val("");
                     this.input.removeAttr("style"); // resizeInput의 효과를 제거하기 위해서
-                    todoListView.writeStorage();
+                    this.parent.writeStorage();
                 }
             });
     }
 
     addNewControl(text: string) {
-        let list = todoListView.listOf_TodoItemControl;
+        let list = this.parent.listOf_TodoItemControl;
 
         let data = { completed: false, text: text };
-        let newControl = new TodoItemControl(data, todoListView);
+        let newControl = new TodoItemControl(data, this.parent);
         list.insert(newControl, list.length() - 1);
     }
 }
 
 //-------------------------------------------------------
 let g_jul8: Jul8.TemplateHolder;
-let todoListView: TodoListView;
 
 $(document).ready(
     () => {
@@ -209,6 +213,6 @@ $(document).ready(
         g_jul8.addTemplateRoot($("#TEMPLATE_HOLDER_ROOT"));
         let parent = $("#PANEL_BODY");
 
-        todoListView = new TodoListView(parent);
+        let todoListView = new TodoListView(parent);
         todoListView.loadStorage();
     });
