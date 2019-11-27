@@ -17,8 +17,8 @@ class TodoListView extends TodoListView_d {
     }
 
     // 로컬 스토리지에 저장할 데이터를 준비한다
-    serialize(): Array<TodoItem> {
-        var result: Array<TodoItem> = new Array<TodoItem>();
+    serialize(): TodoItem[] {
+        var result: TodoItem[] = [];
 
         var list = this.listOf_TodoItemControl;
         list.forEach((control: TodoListView_TodoItemControl_d) => {
