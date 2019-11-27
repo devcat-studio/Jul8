@@ -11,16 +11,12 @@ class TodoListView extends TodoListView_d {
 
         var list = this.listOf_TodoItemControl;
         list.forEach((control: TodoListView_TodoItemControl_d) => {
-            if ( control instanceof TodoItemControl )
-            {
-                let todoItemControl = control as TodoItemControl;
-                //console.log(todoItemControl);
+            if (!(control instanceof TodoItemControl)) { return; }
+            let todoItemControl = control as TodoItemControl;
 
-                let item = todoItemControl.get();
-                if ( item.completed == true )
-                {
-                    return;
-                }
+            let item = todoItemControl.get();
+            if (!item.completed)
+            {
                 result.push(item);
             }
         });
