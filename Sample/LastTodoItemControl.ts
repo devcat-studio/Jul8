@@ -1,3 +1,5 @@
+/// <reference path='sample_templates.g.ts' />
+
 class LastTodoItemControl extends TodoListView_TodoItemControl_d {
     private parent: TodoListView;
 
