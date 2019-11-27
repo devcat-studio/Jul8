@@ -131,12 +131,12 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
         })
         // 이벤트 핸들링: 포커스 빠지면 편집을 마친다
         .focusout(() => {
-            this.writeList(this);
+            this.writeList();
         });
 
         // 이벤트 핸들링: 체크박스 값 확인
         this.completed.change(() => {
-            this.writeList(this);
+            this.writeList();
 
             if (this.completed.prop("checked")) {
                 this.input.addClass("checked");
@@ -170,19 +170,19 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
     }
 
     // 편집 종료
-    writeList(control: TodoItemControl): void {
+    writeList(): void {
         var list = todoListView.listOf_TodoItemControl;
 
-        control.setEditingMode(false);
-        control.data.text = String(control.input.val());
-        control.data.completed = control.completed.prop("checked");
+        this.setEditingMode(false);
+        this.data.text = String(this.input.val());
+        this.data.completed = this.completed.prop("checked");
 
         // 텍스트가 공란이면 해당 리스트를 지워준다
-        if (control.data.text == "") {
-            list.remove(control);
+        if (this.data.text == "") {
+            list.remove(this);
         }
 
-        control.set(control.data);
+        this.set(this.data);
         todoListView.writeStorage();
     }
 
