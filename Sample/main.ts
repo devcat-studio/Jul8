@@ -72,32 +72,6 @@ class TodoListView extends TodoListView_d {
         // 마지막 항목은 '새 항목 추가' 이다.
         // 컨트롤 클래스도 다른 것을 사용함.
         var lastOne = new LastTodoItemControl(this);
-        lastOne.input.attr('placeholder', '새 항목 추가');
-
-        lastOne.input
-            .on("input", () => {
-                TodoItemControl.resizeInput(lastOne.input);
-            })
-            .keydown((event) => {
-                var code = event.keyCode || event.which;
-                if (code == 13) {
-                    lastOne.input.trigger("blur");
-                }
-            })
-            .focusout(() => {
-                var newControl = new TodoItemControl(item, this);
-
-                if (lastOne.input.val() != "") {
-                    list.insert(newControl, list.length() - 1);
-
-                    var t = { completed: false, text: String(lastOne.input.val()) };
-                    newControl.set(t);
-                    lastOne.input.val("");
-                    lastOne.input.removeAttr("style");
-
-                    this.writeStorage();
-                }
-            });
         list.add(lastOne);
     }
 }
@@ -193,6 +167,35 @@ class LastTodoItemControl extends TodoListView_TodoItemControl_d {
     constructor(parent: TodoListView) {
         super({ completed: false, text: "" }, parent);
         this.completed.remove();
+        this.input.attr('placeholder', '새 항목 추가');
+
+        this.input
+            .on("input", () => {
+                TodoItemControl.resizeInput(this.input);
+            })
+            .keydown((event) => {
+                var code = event.keyCode || event.which;
+                if (code == 13) {
+                    this.input.trigger("blur");
+                }
+            })
+            .focusout(() => {
+                if (this.input.val() != "") {
+                    this.addNewControl(String(this.input.val()));
+
+                    this.input.val("");
+                    this.input.removeAttr("style"); // resizeInput의 효과를 제거하기 위해서
+                    todoListView.writeStorage();
+                }
+            });
+    }
+
+    addNewControl(text: string) {
+        let list = todoListView.listOf_TodoItemControl;
+
+        let data = { completed: false, text: text };
+        let newControl = new TodoItemControl(data, todoListView);
+        list.insert(newControl, list.length() - 1);
     }
 }
 
