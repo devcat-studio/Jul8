@@ -113,12 +113,12 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
 
     constructor(data: TodoItem, parent: TodoListView) {
         super(data, parent);
-        this.setEditingMode(false);
+        this.makeInputReadonly();
      
         // 이벤트 핸들링: 포커스되면 편집을 시작한다
         this.input
         .focusin(() => {
-            this.setEditingMode(true);
+            this.makeInputEditable();
         })
         .on("input", () =>{
             TodoItemControl.resizeInput(this.input);
@@ -131,12 +131,12 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
         })
         // 이벤트 핸들링: 포커스 빠지면 편집을 마친다
         .focusout(() => {
-            this.writeList();
+            this.endEditing();
         });
 
         // 이벤트 핸들링: 체크박스 값 확인
         this.completed.change(() => {
-            this.writeList();
+            this.endEditing();
 
             if (this.completed.prop("checked")) {
                 this.input.addClass("checked");
@@ -160,20 +160,18 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
         return this.data;
     }
 
-    setEditingMode(on: boolean): void {
-        if (on) {
-            this.input.removeAttr('readonly');
-        }
-        else {
-            this.input.attr('readonly', '');
-        }
+    makeInputReadonly(): void {
+        this.input.attr('readonly', '');
     }
 
-    // 편집 종료
-    writeList(): void {
+    makeInputEditable(): void {
+        this.input.removeAttr('readonly');
+    }
+
+    endEditing(): void {
         var list = todoListView.listOf_TodoItemControl;
 
-        this.setEditingMode(false);
+        this.makeInputReadonly();
         this.data.text = String(this.input.val());
         this.data.completed = this.completed.prop("checked");
 
