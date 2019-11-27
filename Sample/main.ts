@@ -67,12 +67,6 @@ class TodoListView extends TodoListView_d {
             // list.add된 이후에 정확한 높이값을 알 수 있으므로
             // 중복 호출 같지만 피할 수 없다.
             TodoItemControl.resizeInput(control.input);
-            if (item.completed) {
-                control.input.addClass("checked");
-            }
-            else {
-                control.input.removeClass("checked");
-            }
         }
         
         // 마지막 항목은 '새 항목 추가' 이다.
@@ -137,13 +131,6 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
         // 이벤트 핸들링: 체크박스 값 확인
         this.completed.change(() => {
             this.endEditing();
-
-            if (this.completed.prop("checked")) {
-                this.input.addClass("checked");
-            }
-            else {
-                this.input.removeClass("checked");
-            }
         });
     }
 
@@ -152,6 +139,7 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
         this.data = data;
 
         this.completed.prop("checked", data.completed);
+        this.applyCompletionToInput();
 
         TodoItemControl.resizeInput(this.input);
     }
@@ -168,10 +156,20 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
         this.input.removeAttr('readonly');
     }
 
+    applyCompletionToInput(): void {
+        if (this.data.completed) {
+            this.input.addClass("checked");
+        }
+        else {
+            this.input.removeClass("checked");
+        }
+    }
+
     endEditing(): void {
         var list = todoListView.listOf_TodoItemControl;
 
         this.makeInputReadonly();
+        this.applyCompletionToInput();
         this.data.text = String(this.input.val());
         this.data.completed = this.completed.prop("checked");
 
