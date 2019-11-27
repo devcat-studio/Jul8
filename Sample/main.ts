@@ -64,6 +64,8 @@ class TodoListView extends TodoListView_d {
         for (var item of items) {
             var control = new TodoItemControl(item, this);
             list.add(control);
+            // list.add된 이후에 정확한 높이값을 알 수 있으므로
+            // 중복 호출 같지만 피할 수 없다.
             TodoItemControl.resizeInput(control.input);
             if (item.completed) {
                 control.input.addClass("checked");
