@@ -12,9 +12,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "grunt": "^1.0.4",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-exec": "^3.0.0",
     "ts-node": "^8.5.0",
     "typescript": "^3.7.2"
   },
