@@ -5,8 +5,8 @@ import CodeBuilder from "./codebuilder";
 import { ConfigRoot, BuildItem } from "./config";
 import path from "path";
   
-async function parseHtml(path: string): Promise<Array<Template>> {
-    let result: string = await fs.promises.readFile(path , "utf8");
+function parseHtml(path: string): Array<Template> {
+    let result: string = fs.readFileSync(path, { encoding: "utf8" });
     let dom: jsdom.JSDOM = new jsdom.JSDOM(result);
 
     let templates: Array<Template> = new Array<Template>();
@@ -142,7 +142,7 @@ function parseAndAddField(template: Template, matched: string): void {
     template.fields.add(fname);
 }
 
-async function main(): Promise<void> {
+function main(): void {
     if ( process.argv.length <= 1  ) {
         console.log('usage: npm start <JUL8CONFIG.JSON>');
         process.exit(1);
@@ -158,7 +158,7 @@ async function main(): Promise<void> {
         let sourcePath = path.join(dir, item.source);
         let targetPath = path.join(dir, item.target);
 
-        let templates = await parseHtml(sourcePath);
+        let templates = parseHtml(sourcePath);
         generateTypeScript(config, templates, targetPath);
     }
 }
@@ -268,9 +268,4 @@ function generateClass(cb: CodeBuilder, template: Template, optionalParentClassN
     }
 }
 
-main().then(() => {
-    // await 함수를 기다리기 위한 방법
-},
-err => {
-    console.log(err);
-});
+main();
