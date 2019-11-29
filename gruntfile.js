@@ -27,11 +27,11 @@ module.exports = function (grunt) {
             },
             TSC_W: {
                 cwd: '.',
-                command: 'node_modules\\.bin\\tsc -b Sample -w'
+                command: 'npx tsc -b Sample -w'
             },
             TSC_FORCE: {
                 cwd: '.',
-                command: 'node_modules\\.bin\\tsc -b Sample --force'
+                command: 'npx tsc -b Sample --force'
             }
         },
     });
