@@ -23,7 +23,7 @@ module.exports = function (grunt) {
         exec: {
             JUL8_SAMPLE: {
                 cwd: '.',
-                command: '"Compiler/bin/Jul8Compiler.exe" "Sample/jul8config.json"'
+                command: 'node TSCompiler/dist/index.js "Sample/jul8config.json"'
             },
             TSC_W: {
                 cwd: '.',
