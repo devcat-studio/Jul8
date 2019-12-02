@@ -2,14 +2,14 @@
 
 class TodoListView_d implements Jul8.View
 {
-    $: JQuery;
+    root: HTMLElement;
     listOf_TodoItemControl: Jul8.ViewList<TodoListView_TodoItemControl_d>;
     
-    constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)
+    constructor(templateHolder: Jul8.TemplateHolder, parentNode?: HTMLElement)
     {
-        this.$ = templateHolder.cloneTemplate('TodoListView');
-        if (parentNode) { parentNode.append(this.$); }
-        let s = new Jul8.Scanner(this.$, false);
+        this.root = templateHolder.cloneTemplate('TodoListView');
+        if (parentNode) { parentNode.append(this.root); }
+        let s = new Jul8.Scanner(this.root, false);
         this.listOf_TodoItemControl = s.L<TodoListView_TodoItemControl_d>('TodoItemControl');
     }
 }
@@ -17,15 +17,15 @@ class TodoListView_d implements Jul8.View
 class TodoListView_TodoItemControl_d implements Jul8.View
 {
     _parent: TodoListView_d;
-    $: JQuery;
-    completed: JQuery;
-    input: JQuery;
+    root: HTMLElement;
+    completed: HTMLInputElement;
+    input: HTMLTextAreaElement;
     
     constructor(data: TodoItem, parent: TodoListView_d)
     {
         this._parent = parent;
-        this.$ = parent.listOf_TodoItemControl._cloneTemplate();
-        let s = new Jul8.Scanner(this.$, true);
+        this.root = parent.listOf_TodoItemControl._cloneTemplate();
+        let s = new Jul8.Scanner(this.root, true);
         this.j8fields = s.fields;
         this.completed = s.C('completed');
         this.input = s.C('input');
