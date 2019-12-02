@@ -195,7 +195,6 @@ function generateClass(cb: CodeBuilder, template: Template, optionalParentClassN
         cb.appendLine("root: HTMLElement;");
 
         for(let control of template.controls) {
-            // TODO: JQuery를 제거하는경우 여기서 타입을 출력해준다
             let controlId: string = control.getAttribute("j8-control") as string;
             cb.appendLine(`${controlId}: ${control.constructor.name};`);
         }
