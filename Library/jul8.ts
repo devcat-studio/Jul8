@@ -1,30 +1,30 @@
 ﻿namespace Jul8 {
     export interface View {
-        $: JQuery;
+        root: HTMLElement;
     }
 
     export class ViewList<T extends View> {
-        private root: JQuery;
-        private tmpl: JQuery;
+        private root: HTMLElement;
+        private tmpl: HTMLElement;
         private list: T[] = [];
 
-        constructor($: JQuery, tmpl: JQuery) {
-            this.root = $;
+        constructor(root: HTMLElement, tmpl: HTMLElement) {
+            this.root = root;
             this.tmpl = tmpl;
         }
 
         add<U extends T>(child: U): void {
             this.list.push(child);
-            this.root.append(child.$);
+            this.root.appendChild(child.root);
         }
 
         insert<U extends T>(child: U, index: number): void {
             this.list.splice(index, 0, child);
             if (index == 0) {
-                this.root.prepend(child.$);
+                this.root.insertBefore(child.root, this.root.firstChild);
             }
             else {
-                this.list[index - 1].$.after(child.$);
+                this.list[index - 1].root.after(child.root);
             }
         }
 
@@ -36,7 +36,7 @@
             let idx = this.list.indexOf(child);
             if(idx >= 0) {
                 this.list.splice(idx, 1);
-                child.$.remove();
+                child.root.remove();
             }
         }
 
@@ -46,12 +46,12 @@
             }
             let child = this.list[idx];
             this.list.splice(idx, 1);
-            child.$.remove();
+            child.root.remove();
         }
 
         empty(): void {
             this.list = [];
-            this.root.empty();
+            this.root.textContent = "";
         }
 
         getAt(idx: number): T {
@@ -62,8 +62,8 @@
             this.list.forEach(callbackfn, thisArg);
         }
 
-        _cloneTemplate(): JQuery {
-            return this.tmpl.clone();
+        _cloneTemplate(): HTMLElement {
+            return this.tmpl.cloneNode(true) as HTMLElement;
         }
     }
 
@@ -124,37 +124,36 @@
     };
 
     export class Scanner {
-        controls: { [key: string]: JQuery } = {};
-        lists: { [key: string]: { list: JQuery, itemTemplate: JQuery } } = {};
+        controls: { [key: string]: HTMLElement } = {};
+        lists: { [key: string]: { list: HTMLElement, itemTemplate: HTMLElement } } = {};
         fields: Fields;
 
-        constructor(root: JQuery, scanFields: boolean) {
+        constructor(root: HTMLElement, scanFields: boolean) {
             // 먼저 리스트 항목을 찾아서 부모로부터 뗀다.
             // 그래야 처음에는 없고, 추가하는 만큼 클론해서 붙일 수 있으니까.
-            this.scanListItem(root.get(0));
+            this.scanListItem(root);
 
             // 템플릿과 다르게 컨트롤들은 부모로부터 떼지 않는다.
             // 이미 템플릿 단위로 복제 생성된 상태이기 때문.
-            root.find('[j8-control]').each(
-                (i, v) => {
-                    let cid = v.getAttribute('j8-control');
-                    v.removeAttribute('j8-control');
+            root.querySelectorAll('[j8-control]').forEach((elem: HTMLElement) => {
+                let cid = elem.getAttribute('j8-control');
+                elem.removeAttribute('j8-control');
 
-                    if (this.controls[cid]) {
-                        console.error('(Jul8) duplicate control id: [' + cid + ']')
-                    }
-                    this.controls[cid] = $(v);
-                });
+                if (this.controls[cid]) {
+                    console.error('(Jul8) duplicate control id: [' + cid + ']')
+                }
+                this.controls[cid] = elem;
+            });
 
             if (scanFields) {
                 this.fields = new Fields();
-                this.visitNode(root.get(0));
+                this.visitNode(root);
             }
         }
 
         private scanListItem(baseElem: Element) {
             for (let i = 0; i < baseElem.childNodes.length; ++i) {
-                let elem = baseElem.childNodes[i] as HTMLElement;
+                let elem: any = baseElem.childNodes[i];
                 if (elem.nodeType !== elem.ELEMENT_NODE) continue;
 
                 if (elem.hasAttribute('j8-listItem')) {
@@ -165,9 +164,9 @@
                         console.error('(Jul8) duplicate listItem id: [' + itemId + ']')
                     }
 
-                    let j = $(elem);
-                    let p = j.parent();
-                    j.detach();
+                    let j = <HTMLElement>elem;
+                    let p = (<HTMLElement>j).parentElement;
+                    j.remove();
                     this.lists[itemId] = { list: p, itemTemplate: j };
                 }
                 else {
@@ -233,7 +232,7 @@
             }
         }
 
-        C(controlId: string): JQuery {
+        C(controlId: string): any {
             let ctl = this.controls[controlId];
             if (ctl === undefined) {
                 console.error('(Jul8) no such control: [' + controlId + ']');
@@ -251,7 +250,7 @@
     }
 
     export class TemplateHolder {
-        private templates: { [key: string]: JQuery } = {};
+        private templates: { [key: string]: HTMLElement } = {};
 
         constructor() { }
 
@@ -262,26 +261,28 @@
             let endPos = content.indexOf(endMarker);
             let contentBody = content.substring(beginPos + beginMarker.length, endPos);
 
-            this.addTemplateRoot($(contentBody));
+            let templateRoot = document.createElement("div");
+            templateRoot.insertAdjacentHTML("beforeend", contentBody);
+            this.addTemplateRoot(templateRoot);
         }
 
-        addTemplateRoot(root: JQuery): void {
-            root.find('[j8-template]').each(
-                (i, v) => {
-                    let j = $(v);
-                    j.detach();
-                    let tid = v.getAttribute('j8-template');
-                    v.removeAttribute('j8-template');
-                    this.templates[tid] = j;
-                });
+        addTemplateRoot(root: HTMLElement): void {
+            root.querySelectorAll('[j8-template]').forEach((elem: HTMLElement) => {
+
+                let tid = elem.getAttribute('j8-template');
+                elem.removeAttribute('j8-template');
+                elem.remove();
+                this.templates[tid] = elem;
+            });
         }
 
-        cloneTemplate(templateId: string): JQuery {
+        cloneTemplate(templateId: string): HTMLElement {
             let t = this.templates[templateId];
             if (t === undefined) {
                 console.error('(Jul8) no such template: [' + templateId + ']');
             }
-            return t.clone();
+
+            return t.cloneNode(true) as HTMLElement;
         }
     }
 }

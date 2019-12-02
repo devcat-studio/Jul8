@@ -192,12 +192,12 @@ function generateClass(cb: CodeBuilder, template: Template, optionalParentClassN
             cb.appendLine(`_parent: ${optionalParentClassName}_d;`);
         }
 
-        cb.appendLine("$: JQuery;");
+        cb.appendLine("root: HTMLElement;");
 
         for(let control of template.controls) {
             // TODO: JQuery를 제거하는경우 여기서 타입을 출력해준다
             let controlId: string = control.getAttribute("j8-control") as string;
-            cb.appendLine(controlId + ': JQuery;');
+            cb.appendLine(`${controlId}: ${control.constructor.name};`);
         }
 
         for(let listItem of template.listItems) {
@@ -207,7 +207,7 @@ function generateClass(cb: CodeBuilder, template: Template, optionalParentClassN
 
         // 생성자
         if ( optionalParentClassName == null ) {
-            cb.appendLine("constructor(templateHolder: Jul8.TemplateHolder, parentNode?: JQuery)");
+            cb.appendLine("constructor(templateHolder: Jul8.TemplateHolder, parentNode?: HTMLElement)");
         }
         else {
             if (useModel) {
@@ -220,14 +220,14 @@ function generateClass(cb: CodeBuilder, template: Template, optionalParentClassN
 
         cb.indent('{', '}', () => {
             if ( optionalParentClassName == null ) {
-                cb.appendLine(`this.$ = templateHolder.cloneTemplate('${template.templateId}');`);
-                cb.appendLine("if (parentNode) { parentNode.append(this.$); }");
+                cb.appendLine(`this.root = templateHolder.cloneTemplate('${template.templateId}');`);
+                cb.appendLine("if (parentNode) { parentNode.append(this.root); }");
             }
             else {
                 cb.appendLine("this._parent = parent;");
-                cb.appendLine(`this.$ = parent.listOf_${template.templateId}._cloneTemplate();`);
+                cb.appendLine(`this.root = parent.listOf_${template.templateId}._cloneTemplate();`);
             }
-            cb.appendLine(`let s = new Jul8.Scanner(this.$, ${useModel ? "true": "false"});`);
+            cb.appendLine(`let s = new Jul8.Scanner(this.root, ${useModel ? "true": "false"});`);
             if(useModel) {
                 cb.appendLine("this.j8fields = s.fields;");
             }
