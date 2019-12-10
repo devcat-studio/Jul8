@@ -57,7 +57,7 @@ class TodoListView extends TodoListView_d {
             list.add(control);
             // list.add된 이후에 정확한 높이값을 알 수 있으므로
             // 중복 호출 같지만 피할 수 없다.
-            TodoItemControl.resizeInput($(control.input));
+            TodoItemControl.resizeInput(control.input);
         }
         
         // 마지막 항목은 '새 항목 추가' 이다.

@@ -4,7 +4,6 @@
     "declaration": false,
 
     "lib": [ "dom", "es5", "es6" ],
-    "types": [ "jquery" ],
     "module": "none",
     "noEmitOnError": true,
     "removeComments": true,
