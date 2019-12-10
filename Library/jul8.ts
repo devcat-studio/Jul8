@@ -149,6 +149,8 @@
                 this.fields = new Fields();
                 this.visitNode(root);
             }
+            
+            root.removeAttribute('j8-model');
         }
 
         private scanListItem(baseElem: Element) {
