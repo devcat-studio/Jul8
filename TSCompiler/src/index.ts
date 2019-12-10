@@ -184,7 +184,7 @@ function generateTypeScript(config: ConfigRoot, templates: Array<Template>, path
 }
 
 function generateClass(cb: CodeBuilder, template: Template, optionalParentClassName: string | null) {
-    let useModel: boolean = ( template.fields.size >0 || template.modelName != null);
+    let useModel: boolean = (template.fields.size > 0 && template.modelName != null);
 
     cb.appendLine(`class ${template.className}_d implements Jul8.View`);
     cb.indent('{', '}', () => {
@@ -206,7 +206,12 @@ function generateClass(cb: CodeBuilder, template: Template, optionalParentClassN
 
         // 생성자
         if ( optionalParentClassName == null ) {
-            cb.appendLine("constructor(templateHolder: Jul8.TemplateHolder, parentNode?: HTMLElement)");
+            if (useModel) {
+                cb.appendLine(`constructor(data: ${template.modelName}, templateHolder: Jul8.TemplateHolder, parentNode?: HTMLElement)`);
+            }
+            else {
+                cb.appendLine(`constructor(templateHolder: Jul8.TemplateHolder, parentNode?: HTMLElement)`);
+            }
         }
         else {
             if (useModel) {
