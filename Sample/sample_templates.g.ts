@@ -1,4 +1,4 @@
-/// <reference path='../Library/jul8.ts' />
+/// <reference path='../jul8/runtime/jul8.ts' />
 
 class TodoListView_d implements Jul8.View
 {

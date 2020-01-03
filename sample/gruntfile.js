@@ -14,7 +14,7 @@ module.exports = function (grunt) {
         // https://github.com/gruntjs/grunt-contrib-watch
         watch: {
             JUL8_SAMPLE: {
-                files: ["Sample/html/sample_templates.html"],
+                files: ["html/sample_templates.html"],
                 tasks: ["exec:JUL8_SAMPLE"],
             }
         },      
@@ -23,15 +23,15 @@ module.exports = function (grunt) {
         exec: {
             JUL8_SAMPLE: {
                 cwd: '.',
-                command: 'node TSCompiler/dist/index.js "Sample/jul8config.json"'
+                command: 'node ../jul8/dist/index.js "jul8config.json"'
             },
             TSC_W: {
                 cwd: '.',
-                command: 'npx tsc -b Sample -w'
+                command: 'npx tsc -b . -w'
             },
             TSC_FORCE: {
                 cwd: '.',
-                command: 'npx tsc -b Sample --force'
+                command: 'npx tsc -b . --force'
             }
         },
     });
