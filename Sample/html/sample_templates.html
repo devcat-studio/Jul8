@@ -122,6 +122,31 @@
                 <textarea cols="12" rows="4" j8-control="input">{{ text }}</textarea>
             </div>
         </div>
+
+        <!-- 모델 있는 템플릿 -->
+        <div j8-template="TEST_Template1" j8-model="TEST_Model">
+            <div>{{ field }}</div>
+        </div>
+
+        <!-- 모델 없는 템플릿 -->
+        <div j8-template="TEST_Template2">
+            <div j8-control="Control"></div>
+        </div>
+
+        <!-- 모델 있는 리스트아이템 -->
+        <div j8-template="TEST_Template3">
+            <div j8-listItem="TEST_ListItem" j8-model="TEST_Model">
+                <div>{{ field }}</div>
+            </div>
+        </div>
+
+        <!-- 모델 없는 리스트아이템 -->
+        <div j8-template="TEST_Template4">
+            <div j8-listItem="TEST_ListItem">
+                <div j8-control="Control"></div>
+            </div>
+        </div>
+
         $(TemplateEnd)
         <!-- ########################################################################### -->
 
