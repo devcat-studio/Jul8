@@ -1,0 +1,16 @@
+{
+  "name": "jul8",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "server": "npx nodemon backend/main.js"
+  },
+  "dependencies": {
+    "grunt": "^1.0.4",
+    "grunt-concurrent": "^3.0.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-exec": "^3.0.0",
+    "nodemon": "^2.0.2",
+    "typescript": "^3.6.3"
+  }
+}

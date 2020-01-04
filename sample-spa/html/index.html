@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <script src='/static/all.js'></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    </head>
+    <body>
+        <div id='TEMPLATES_ROOT' style='display:none;'>
+            <!-- ########################################################################### -->
+            $(TemplateBegin)
+
+            <div j8-template="HomePage">
+            </div>
+
+            <div j8-template="ArticleTitleList" j8-model="BoardData">
+                <h3>{{ name }}</h3>
+                <ul>
+                    <li j8-listItem="Item" j8-model="ArticleListItemViewData">
+                        <a href="{{ link }}">{{ title }}</a>
+                    </li>
+                </ul>
+            </div>
+
+            $(TemplateEnd)
+            <!-- ########################################################################### -->
+        </div>
+           
+        <div id='Root'></div>
+
+        <script>
+            initializeTemplate();
+            g_jul8spa.initializePage((JUL8SPA_INIT_PARAMS_HERE));
+        </script>
+    </body>
+</html>

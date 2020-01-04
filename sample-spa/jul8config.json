@@ -1,0 +1,14 @@
+{
+  "header": [
+    "/// <reference path='../../jul8/runtime/jul8.ts' />",
+    ""
+  ],
+  "footer": [
+  ],
+  "build": [
+    {
+      "source": "html/index.html",
+      "target": "frontend/templates.g.ts"
+    }
+  ]
+}
