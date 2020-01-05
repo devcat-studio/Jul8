@@ -13,6 +13,7 @@ class Jul8SPA
         let pathname = document.location.pathname;
         let className = routingTable[pathname];
         let klass: any = this.scope[className];
+        console.assert(klass, `[Jul8SPA] ${className} - Page class not found`);
         let object: any = new klass(data);
     }
 }

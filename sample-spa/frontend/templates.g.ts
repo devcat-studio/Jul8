@@ -17,7 +17,7 @@ class ArticleTitleList_d implements Jul8.View
     root: HTMLElement;
     listOf_Item: Jul8.ViewList<ArticleTitleList_Item_d>;
     
-    constructor(data: BoardData, templateHolder: Jul8.TemplateHolder, parentNode?: HTMLElement)
+    constructor(data: BoardViewData, templateHolder: Jul8.TemplateHolder, parentNode?: HTMLElement)
     {
         this.root = templateHolder.cloneTemplate('ArticleTitleList');
         if (parentNode) { parentNode.append(this.root); }
@@ -28,22 +28,22 @@ class ArticleTitleList_d implements Jul8.View
     }
     
     private j8fields: Jul8.Fields;
-    set(data: BoardData): void
+    set(data: BoardViewData): void
     {
         data.name;
+        data.link;
         this.j8fields.set(data);
     }
 }
 
 class ArticleTitleList_Item_d implements Jul8.View
 {
-    _parent: ArticleTitleList_d;
     root: HTMLElement;
     
-    constructor(data: ArticleListItemViewData, parent: ArticleTitleList_d)
+    constructor(data: ArticleListItemViewData, templateHolder: Jul8.TemplateHolder, parent?: ArticleTitleList_d)
     {
-        this._parent = parent;
-        this.root = parent.listOf_Item._cloneTemplate();
+        this.root = templateHolder.cloneTemplate('ArticleTitleList_Item');
+        if (parent) { parent.listOf_Item.add(this); }
         let s = new Jul8.Scanner(this.root, true);
         this.j8fields = s.fields;
         if (data) { this.set(data); }
@@ -54,6 +54,29 @@ class ArticleTitleList_Item_d implements Jul8.View
     {
         data.title;
         data.link;
+        this.j8fields.set(data);
+    }
+}
+
+class ArticlePage_d implements Jul8.View
+{
+    root: HTMLElement;
+    
+    constructor(data: ArticleData, templateHolder: Jul8.TemplateHolder, parentNode?: HTMLElement)
+    {
+        this.root = templateHolder.cloneTemplate('ArticlePage');
+        if (parentNode) { parentNode.append(this.root); }
+        let s = new Jul8.Scanner(this.root, true);
+        this.j8fields = s.fields;
+        if (data) { this.set(data); }
+    }
+    
+    private j8fields: Jul8.Fields;
+    set(data: ArticleData): void
+    {
+        data.boardName;
+        data.title;
+        data.content;
         this.j8fields.set(data);
     }
 }

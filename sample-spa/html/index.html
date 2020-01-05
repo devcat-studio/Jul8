@@ -11,13 +11,21 @@
             <div j8-template="HomePage">
             </div>
 
-            <div j8-template="ArticleTitleList" j8-model="BoardData">
-                <h3>{{ name }}</h3>
+            <div j8-template="ArticleTitleList" j8-model="BoardViewData">
+                <h3><a href="{{ link }}">{{ name }}</a></h3>
                 <ul>
                     <li j8-listItem="Item" j8-model="ArticleListItemViewData">
                         <a href="{{ link }}">{{ title }}</a>
                     </li>
                 </ul>
+            </div>
+
+            <div j8-template="ArticlePage" j8-model="ArticleData">
+                <div>{{ boardName }} 의 게시물</div>
+                <h3>{{ title }}</h3>
+                <div>
+                    {{ content }}
+                </div>
             </div>
 
             $(TemplateEnd)

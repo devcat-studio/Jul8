@@ -1,12 +1,11 @@
 /// <reference path='templates.g.ts' />
 
-class HomePage extends HomePage_d {
-    constructor(data: HomePageData) {
-        super(g_jul8, g_appRootNode);
+class ArticlePage extends ArticlePage_d {
+    constructor(data: ArticleData) {
+        super(data, g_jul8, g_appRootNode);
 
-        this.fillBoard('free', data, this.root);
-        this.fillBoard('humor', data, this.root);
-        this.fillBoard('news', data, this.root);
+        
+
     }
 
     fillBoard(boardId: string, homePageData: HomePageData, parentNode: HTMLElement) {

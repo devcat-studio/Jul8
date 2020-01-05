@@ -1,4 +1,6 @@
 type ArticleData = {
+    boardName: string,
+    boardId: string,
     title: string,
     content: string,
     id: number
@@ -12,6 +14,11 @@ type ArticleListItemViewData = {
 type BoardData = {
     name: string,
     list: ArticleData[]
+}
+
+type BoardViewData = {
+    name: string,
+    link: string,
 }
 
 type HomePageData = {
