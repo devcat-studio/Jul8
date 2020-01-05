@@ -4,7 +4,7 @@ class LastTodoItemControl extends TodoListView_TodoItemControl_d {
     private parent: TodoListView;
 
     constructor(parent: TodoListView) {
-        super({ completed: false, text: "" }, parent);
+        super({ completed: false, text: "" }, g_jul8);
         this.parent = parent;
         this.completed.remove();
         this.input.setAttribute("placeholder", "새 항목 추가");

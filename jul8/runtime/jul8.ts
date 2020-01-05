@@ -5,12 +5,10 @@
 
     export class ViewList<T extends View> {
         private root: HTMLElement;
-        private tmpl: HTMLElement;
         private list: T[] = [];
 
-        constructor(root: HTMLElement, tmpl: HTMLElement) {
+        constructor(root: HTMLElement) {
             this.root = root;
-            this.tmpl = tmpl;
         }
 
         add<U extends T>(child: U): void {
@@ -60,10 +58,6 @@
 
         forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void {
             this.list.forEach(callbackfn, thisArg);
-        }
-
-        _cloneTemplate(): HTMLElement {
-            return this.tmpl.cloneNode(true) as HTMLElement;
         }
     }
 
@@ -125,16 +119,17 @@
 
     export class Scanner {
         controls: { [key: string]: HTMLElement } = {};
-        lists: { [key: string]: { list: HTMLElement, itemTemplate: HTMLElement } } = {};
+        listRootElems: { [key: string]: HTMLElement } = {};
         fields: Fields;
 
         constructor(root: HTMLElement, scanFields: boolean) {
-            // 먼저 리스트 항목을 찾아서 부모로부터 뗀다.
-            // 그래야 처음에는 없고, 추가하는 만큼 클론해서 붙일 수 있으니까.
-            this.scanListItem(root);
+            // querySelectorAll에는 자기 자신이 포함되지 않아서 이렇게 따로 검사함.
+            if (root.hasAttribute('j8-listRoot')) { this.visitListRoot(root); }
 
-            // 템플릿과 다르게 컨트롤들은 부모로부터 떼지 않는다.
-            // 이미 템플릿 단위로 복제 생성된 상태이기 때문.
+            // 자식 listRoot 찾기
+            root.querySelectorAll('[j8-listRoot]').forEach((elem: HTMLElement) => this.visitListRoot(elem));
+
+            // control들 찾기
             root.querySelectorAll('[j8-control]').forEach((elem: HTMLElement) => {
                 let cid = elem.getAttribute('j8-control');
                 elem.removeAttribute('j8-control');
@@ -149,32 +144,18 @@
                 this.fields = new Fields();
                 this.visitNode(root);
             }
-            
-            root.removeAttribute('j8-model');
         }
 
-        private scanListItem(baseElem: Element) {
-            for (let i = 0; i < baseElem.childNodes.length; ++i) {
-                let elem: any = baseElem.childNodes[i];
-                if (elem.nodeType !== elem.ELEMENT_NODE) continue;
+        private visitListRoot(elem: HTMLElement) {
+            let itemId = elem.getAttribute('j8-listRoot');
+            elem.removeAttribute('j8-listRoot');
 
-                if (elem.hasAttribute('j8-listItem')) {
-                    let itemId = elem.getAttribute('j8-listItem');
-                    elem.removeAttribute('j8-listItem');
-                    elem.removeAttribute('j8-model');
-                    if (this.lists[itemId]) {
-                        console.error('(Jul8) duplicate listItem id: [' + itemId + ']')
-                    }
-
-                    let j = <HTMLElement>elem;
-                    let p = (<HTMLElement>j).parentElement;
-                    j.remove();
-                    this.lists[itemId] = { list: p, itemTemplate: j };
-                }
-                else {
-                    this.scanListItem(elem);
-                }
+            if (this.listRootElems[itemId]) {
+                console.error('(Jul8) duplicate listItem id: [' + itemId + ']')
             }
+            console.assert(elem.childElementCount == 0);
+
+            this.listRootElems[itemId] = elem;
         }
 
         private visitNode(node: Node) {
@@ -243,11 +224,11 @@
         }
 
         L<T extends View>(listItemId: string): ViewList<T> {
-            let it = this.lists[listItemId];
+            let it = this.listRootElems[listItemId];
             if (it === undefined) {
                 console.error('(Jul8) no such listItem: [' + listItemId + ']');
             }
-            return new ViewList<T>(it.list, it.itemTemplate);
+            return new ViewList<T>(it);
         }
     }
 
@@ -270,11 +251,20 @@
 
         addTemplateRoot(root: HTMLElement): void {
             root.querySelectorAll('[j8-template]').forEach((elem: HTMLElement) => {
-
                 let tid = elem.getAttribute('j8-template');
                 elem.removeAttribute('j8-template');
+                elem.removeAttribute('j8-model');
                 elem.remove();
                 this.templates[tid] = elem;
+
+                elem.querySelectorAll('[j8-listItem]').forEach((listElem: HTMLElement) => {
+                    let lid = listElem.getAttribute('j8-listItem');
+                    listElem.parentElement.setAttribute('j8-listRoot', lid);
+                    listElem.removeAttribute('j8-listItem');
+                    listElem.removeAttribute('j8-model');
+                    listElem.remove();
+                    this.templates[tid + '_' + lid] = listElem;
+                })
             });
         }
 

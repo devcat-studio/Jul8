@@ -5,7 +5,7 @@ class TodoItemControl extends TodoListView_TodoItemControl_d {
     private parent: TodoListView;
 
     constructor(data: TodoItem, parent: TodoListView) {
-        super(data, parent);
+        super(data, g_jul8);
         this.parent = parent;
         this.makeInputReadonly();
      

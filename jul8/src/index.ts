@@ -188,10 +188,6 @@ function generateClass(cb: CodeBuilder, template: Template, optionalParentClassN
 
     cb.appendLine(`class ${template.className}_d implements Jul8.View`);
     cb.indent('{', '}', () => {
-        if ( optionalParentClassName != null) {
-            cb.appendLine(`_parent: ${optionalParentClassName}_d;`);
-        }
-
         cb.appendLine("root: HTMLElement;");
 
         for(let control of template.controls) {
@@ -215,21 +211,20 @@ function generateClass(cb: CodeBuilder, template: Template, optionalParentClassN
         }
         else {
             if (useModel) {
-                cb.appendLine(`constructor(data: ${template.modelName}, parent: ${optionalParentClassName}_d)`);
+                cb.appendLine(`constructor(data: ${template.modelName}, templateHolder: Jul8.TemplateHolder, parent?: ${optionalParentClassName}_d)`);
             }
             else {
-                cb.appendLine(`constructor(parent: ${optionalParentClassName}_d)`);
+                cb.appendLine(`constructor(templateHolder: Jul8.TemplateHolder, parent?: ${optionalParentClassName}_d)`);
             }
         }
 
         cb.indent('{', '}', () => {
+            cb.appendLine(`this.root = templateHolder.cloneTemplate('${template.className}');`);
             if ( optionalParentClassName == null ) {
-                cb.appendLine(`this.root = templateHolder.cloneTemplate('${template.templateId}');`);
                 cb.appendLine("if (parentNode) { parentNode.append(this.root); }");
             }
             else {
-                cb.appendLine("this._parent = parent;");
-                cb.appendLine(`this.root = parent.listOf_${template.templateId}._cloneTemplate();`);
+                cb.appendLine(`if (parent) { parent.listOf_${template.templateId}.add(this); }`);
             }
             cb.appendLine(`let s = new Jul8.Scanner(this.root, ${useModel ? "true": "false"});`);
             if(useModel) {

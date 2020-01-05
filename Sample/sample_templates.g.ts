@@ -16,15 +16,14 @@ class TodoListView_d implements Jul8.View
 
 class TodoListView_TodoItemControl_d implements Jul8.View
 {
-    _parent: TodoListView_d;
     root: HTMLElement;
     completed: HTMLInputElement;
     input: HTMLTextAreaElement;
     
-    constructor(data: TodoItem, parent: TodoListView_d)
+    constructor(data: TodoItem, templateHolder: Jul8.TemplateHolder, parent?: TodoListView_d)
     {
-        this._parent = parent;
-        this.root = parent.listOf_TodoItemControl._cloneTemplate();
+        this.root = templateHolder.cloneTemplate('TodoListView_TodoItemControl');
+        if (parent) { parent.listOf_TodoItemControl.add(this); }
         let s = new Jul8.Scanner(this.root, true);
         this.j8fields = s.fields;
         this.completed = s.C('completed');
@@ -91,13 +90,12 @@ class TEST_Template3_d implements Jul8.View
 
 class TEST_Template3_TEST_ListItem_d implements Jul8.View
 {
-    _parent: TEST_Template3_d;
     root: HTMLElement;
     
-    constructor(data: TEST_Model, parent: TEST_Template3_d)
+    constructor(data: TEST_Model, templateHolder: Jul8.TemplateHolder, parent?: TEST_Template3_d)
     {
-        this._parent = parent;
-        this.root = parent.listOf_TEST_ListItem._cloneTemplate();
+        this.root = templateHolder.cloneTemplate('TEST_Template3_TEST_ListItem');
+        if (parent) { parent.listOf_TEST_ListItem.add(this); }
         let s = new Jul8.Scanner(this.root, true);
         this.j8fields = s.fields;
         if (data) { this.set(data); }
@@ -127,14 +125,13 @@ class TEST_Template4_d implements Jul8.View
 
 class TEST_Template4_TEST_ListItem_d implements Jul8.View
 {
-    _parent: TEST_Template4_d;
     root: HTMLElement;
     Control: HTMLDivElement;
     
-    constructor(parent: TEST_Template4_d)
+    constructor(templateHolder: Jul8.TemplateHolder, parent?: TEST_Template4_d)
     {
-        this._parent = parent;
-        this.root = parent.listOf_TEST_ListItem._cloneTemplate();
+        this.root = templateHolder.cloneTemplate('TEST_Template4_TEST_ListItem');
+        if (parent) { parent.listOf_TEST_ListItem.add(this); }
         let s = new Jul8.Scanner(this.root, false);
         this.Control = s.C('Control');
     }
